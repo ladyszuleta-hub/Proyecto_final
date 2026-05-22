@@ -10,18 +10,28 @@ CONFIG += c++17
 
 SOURCES += \
     entidad.cpp \
+    fireenemy.cpp \
     fisicas.cpp \
     main.cpp \
     mainwindow.cpp \
     objetojuego.cpp \
-    vector2d.cpp
+    obstaculo.cpp \
+    premio.cpp \
+    snowman.cpp \
+    vector2d.cpp \
+    zonasegura.cpp
 
 HEADERS += \
     entidad.h \
+    fireenemy.h \
     fisicas.h \
     mainwindow.h \
     objetoJuego.h \
-    vector2D.h
+    obstaculo.h \
+    premio.h \
+    snowman.h \
+    vector2D.h \
+    zonasegura.h
 
 FORMS += \
     mainwindow.ui
