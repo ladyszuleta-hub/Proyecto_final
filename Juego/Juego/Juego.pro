@@ -15,11 +15,8 @@ SOURCES += \
     main.cpp \
     mainwindow.cpp \
     objetojuego.cpp \
-    obstaculo.cpp \
-    premio.cpp \
     snowman.cpp \
-    vector2d.cpp \
-    zonasegura.cpp
+    vector2d.cpp
 
 HEADERS += \
     entidad.h \
@@ -27,11 +24,8 @@ HEADERS += \
     fisicas.h \
     mainwindow.h \
     objetoJuego.h \
-    obstaculo.h \
-    premio.h \
     snowman.h \
-    vector2D.h \
-    zonasegura.h
+    vector2D.h
 
 FORMS += \
     mainwindow.ui
