@@ -9,6 +9,7 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    nivel1 = nullptr;
 
     // CONFIGURACION INICIAL
 
@@ -54,50 +55,8 @@ MainWindow::MainWindow(QWidget *parent)
             fondoActual = QPixmap(
                 ":/img/Recursos/fondo_n1.png");
 
-            // CREAR JUGADOR
 
-            jugador = new SnowMan(
-
-                300,
-                100,
-
-                40,
-                48,
-
-                new GravityPhysics(
-                    500.0f,
-                    650.0f
-                    ),
-
-                3
-                );
-
-            // LIMITES
-
-            jugador->setLimites(
-                QRectF(
-                    0,
-                    0,
-                    width(),
-                    height()
-                    ));
-
-            // CREAR ENEMIGO
-
-            enemigo = new FireEnemy(
-
-                900,
-                150,
-
-                36,
-                36,
-
-                new FrictionPhysics(
-                    0.01f
-                    )
-                );
-
-            enemigo->setTarget(jugador);
+            nivel1 = new Nivel1();
 
             // INICIAR TIMER
 
@@ -172,13 +131,7 @@ MainWindow::MainWindow(QWidget *parent)
         {
             if(juegoIniciado)
             {
-                // ACTUALIZAR JUGADOR
-
-                jugador->actualizar(0.016f);
-
-                // ACTUALIZAR ENEMIGO
-
-                enemigo->actualizar(0.016f);
+                nivel1->actualizar(0.016f);
 
                 // REDIBUJAR
 
@@ -189,9 +142,7 @@ MainWindow::MainWindow(QWidget *parent)
 
 MainWindow::~MainWindow()
 {
-    delete jugador;
-
-    delete enemigo;
+    delete nivel1;
 
     delete ui;
 }
@@ -214,36 +165,7 @@ void MainWindow::paintEvent(QPaintEvent *event)
 
     if(juegoIniciado)
     {
-        jugador->renderizar(&painter);
-
-        enemigo->renderizar(&painter);
-
-        // HUD
-
-        painter.setPen(Qt::white);
-
-        painter.setFont(
-            QFont(
-                "Arial",
-                16,
-                QFont::Bold
-                ));
-
-        painter.drawText(
-            20,
-            40,
-            "VIDAS: "
-                + QString::number(
-                    jugador->getVidas()
-                    ));
-
-        painter.drawText(
-            20,
-            70,
-            "PUNTAJE: "
-                + QString::number(
-                    jugador->getPuntaje()
-                    ));
+        nivel1->renderizar(&painter);
     }
 }
 
@@ -253,10 +175,7 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
 {
     if(juegoIniciado)
     {
-        jugador->manejarTeclaPresionada(
-            static_cast<Qt::Key>(
-                event->key()
-                ));
+        nivel1->manejarTeclaPresionada(event);
     }
 }
 
@@ -264,9 +183,6 @@ void MainWindow::keyReleaseEvent(QKeyEvent *event)
 {
     if(juegoIniciado)
     {
-        jugador->manejarTeclaLiberada(
-            static_cast<Qt::Key>(
-                event->key()
-                ));
+        nivel1->manejarTeclaLiberada(event);
     }
 }

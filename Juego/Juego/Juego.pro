@@ -14,18 +14,26 @@ SOURCES += \
     fisicas.cpp \
     main.cpp \
     mainwindow.cpp \
+    nivel1.cpp \
     objetojuego.cpp \
+    obstaculo.cpp \
+    premio.cpp \
     snowman.cpp \
-    vector2d.cpp
+    vector2d.cpp \
+    zonasegura.cpp
 
 HEADERS += \
     entidad.h \
     fireenemy.h \
     fisicas.h \
     mainwindow.h \
+    nivel1.h \
     objetoJuego.h \
+    obstaculo.h \
+    premio.h \
     snowman.h \
-    vector2D.h
+    vector2D.h \
+    zonasegura.h
 
 FORMS += \
     mainwindow.ui

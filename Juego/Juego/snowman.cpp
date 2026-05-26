@@ -2,6 +2,9 @@
 
 #include <stdexcept>
 #include <QPen>
+#include <QPixmap>
+#include <QDebug>
+
 
 // ======================================================
 // CONSTRUCTOR
@@ -43,6 +46,16 @@ SnowMan::SnowMan(float x,
     velocidadAuto = 80.0f;
 
     tieneLimites = false;
+
+    frameActual = 0;
+
+    animTimer = 0;
+
+    chocando = false;
+
+    nivelActual = 1;
+
+    cargarFrames();
 }
 
 // ======================================================
@@ -60,6 +73,21 @@ void SnowMan::updateLogic(float dt)
 
     if(moviendoDerecha)
         moverDerecha(dt);
+    if(moviendoArriba)
+    {
+        moverArriba(dt);
+
+        //estado = EstadoSnowMan::MOVIENDO_ARRIBA;
+    }
+
+    if(moviendoAbajo)
+    {
+        moverAbajo(dt);
+
+        //estado = EstadoSnowMan::MOVIENDO_ABAJO;
+
+    }
+
 
     // Movimiento automático vertical
     velocidad.setY(velocidadAuto);
@@ -68,6 +96,8 @@ void SnowMan::updateLogic(float dt)
     actualizarBoost(dt);
 
     actualizarHit(dt);
+
+    actualizarSprite(dt);
 
     // Limitar mapa
     if(tieneLimites)
@@ -95,8 +125,10 @@ void SnowMan::updateLogic(float dt)
 // RENDER
 // ======================================================
 
-void SnowMan::renderizar(QPainter* painter)
+/*void SnowMan::renderizar(QPainter* painter)
 {
+    if (frames.empty())
+        return;
     if(!activo)
         return;
 
@@ -169,6 +201,19 @@ void SnowMan::renderizar(QPainter* painter)
     }
 
     painter->restore();
+}*/
+void SnowMan::renderizar(QPainter* painter)
+{
+    if(frames.empty())
+        return;
+
+    painter->drawPixmap(
+        QRectF(posicion.getX(),posicion.getY(),ancho,alto),
+
+        frames[frameActual],
+
+        frames[frameActual].rect()
+        );
 }
 
 // ======================================================
@@ -190,10 +235,15 @@ void SnowMan::manejarTeclaPresionada(Qt::Key key)
 
         moviendoDerecha = true;
         break;
-
-    case Qt::Key_Space:
     case Qt::Key_Up:
     case Qt::Key_W:
+        moviendoArriba = true;
+        break;
+    case Qt::Key_Down:
+    case Qt::Key_S:
+        moviendoAbajo=true;
+
+    case Qt::Key_Space:
 
         saltar();
         break;
@@ -218,6 +268,13 @@ void SnowMan::manejarTeclaLiberada(Qt::Key key)
 
         moviendoDerecha = false;
         break;
+    case Qt::Key_Up:
+    case Qt::Key_W:
+        moviendoArriba = false;
+        break;
+    case Qt::Key_Down:
+    case Qt::Key_S:
+        moviendoAbajo=false;
 
     default:
         break;
@@ -240,6 +297,14 @@ void SnowMan::moverDerecha(float dt)
     aplicarfuerza(
         Vector2D(speed,0),
         dt);
+}
+void SnowMan::moverArriba(float dt)
+{
+    aplicarfuerza(Vector2D(0,-speed),dt);
+}
+void SnowMan::moverAbajo(float dt)
+{
+    aplicarfuerza(Vector2D(0,speed),dt);
 }
 
 // ======================================================
@@ -419,5 +484,86 @@ void SnowMan::limitarDentroMapa()
     {
         posicion.setX(
             limitesMapa.right() - ancho);
+    }
+}
+void SnowMan::cargarFrames()
+{
+    spriteSheet.load(":/img/Recursos/snow.png");
+
+    if(spriteSheet.isNull())
+    {
+        qDebug() << "No se pudo cargar el sprite";
+        return;
+    }
+
+    int filas = 5;
+
+    int columnas = 5;
+
+    int anchoFrame =spriteSheet.width()/columnas;
+
+    int altoFrame =spriteSheet.height()/filas;
+
+    for(int y=0; y<filas; y++)
+    {
+        for(int x=0; x<columnas; x++)
+        {
+            frames.push_back(
+                spriteSheet.copy(x*anchoFrame,y*altoFrame,anchoFrame,altoFrame)
+                );
+        }
+    }
+}
+void SnowMan::actualizarSprite(float dt)
+{
+    (void)dt;
+    if(chocando)
+    {
+        frameActual = 13;
+        return;
+    }
+    switch(estado)
+    {
+    case EstadoSnowMan::IDLE:
+        frameActual = 0;
+        break;
+    case EstadoSnowMan::MOVIENDO_ARRIBA:
+
+        frameActual = 16;
+        break;
+    case EstadoSnowMan::MOVIENDO_ABAJO:
+        frameActual = 0;
+        break;
+    case EstadoSnowMan::MOVIENDO_IZQUIERDA:
+        frameActual = 6;
+        break;
+    case EstadoSnowMan::MOVIENDO_DERECHA:
+
+        frameActual = 3;
+        break;
+    case EstadoSnowMan::SALTANDO:
+
+        frameActual = 8;
+        break;
+
+
+    case EstadoSnowMan::GOLPEADO:
+
+        frameActual = 13;
+        break;
+    case EstadoSnowMan::MUERTO:
+
+        frameActual = 14;
+        break;
+    }
+}
+void SnowMan::setChocando(bool estado)
+{
+    chocando = estado;
+
+    if(chocando)
+    {
+        this->estado =
+            EstadoSnowMan::GOLPEADO;
     }
 }

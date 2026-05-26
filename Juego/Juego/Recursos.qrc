@@ -2,5 +2,6 @@
     <qresource prefix="/img">
         <file>Recursos/fondo_n1.png</file>
         <file>Recursos/menuprinc.png</file>
+        <file>Recursos/snow.png</file>
     </qresource>
 </RCC>

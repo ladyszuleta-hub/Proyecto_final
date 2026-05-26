@@ -5,6 +5,7 @@
 #include <QTimer>
 #include <QPainter>
 #include <QKeyEvent>
+#include "nivel1.h"
 #include "fireenemy.h"
 #include "snowman.h"
 
@@ -38,8 +39,7 @@ private:
     Ui::MainWindow *ui;
     QPixmap fondoActual;
     QTimer* timer;
-    SnowMan* jugador;
-    FireEnemy* enemigo;
+    Nivel1* nivel1;
     bool juegoIniciado;
 
 
