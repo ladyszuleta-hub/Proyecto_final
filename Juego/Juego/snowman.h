@@ -6,6 +6,8 @@
 #include <QKeyEvent>
 #include <QPainter>
 #include <QRectF>
+#include <QPixmap>
+#include <QVector>
 
 // ======================================================
 // ESTADOS DEL PERSONAJE
@@ -14,6 +16,8 @@
 enum class EstadoSnowMan
 {
     IDLE,
+    MOVIENDO_ARRIBA,
+    MOVIENDO_ABAJO,
     MOVIENDO_IZQUIERDA,
     MOVIENDO_DERECHA,
     SALTANDO,
@@ -66,6 +70,10 @@ public:
 
     void moverDerecha(float dt);
 
+    void moverArriba(float dt);
+
+    void moverAbajo(float dt);
+
     void saltar();
 
     // ==================================================
@@ -101,6 +109,14 @@ public:
     // ==================================================
 
     void setLimites(QRectF limites);
+    //sprites
+    void cargarFrames();
+
+    void actualizarSprite(float dt);
+
+    void setChocando(bool estado);
+
+    void setNivelActual(int nivel);
 
 private:
 
@@ -130,6 +146,9 @@ private:
     bool moviendoIzquierda;
 
     bool moviendoDerecha;
+    bool moviendoArriba;
+
+    bool moviendoAbajo;
 
     // Movimiento automático nivel 1
     float velocidadAuto;
@@ -148,6 +167,19 @@ private:
     void actualizarHit(float dt);
 
     void limitarDentroMapa();
+
+    //sprites
+    QPixmap spriteSheet;
+
+    QVector<QPixmap> frames;
+
+    int frameActual;
+
+    float animTimer;
+
+    bool chocando;
+
+    int nivelActual;
 };
 
 #endif // SNOWMAN_H
