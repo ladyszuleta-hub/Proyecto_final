@@ -9,10 +9,6 @@
 #include <QPixmap>
 #include <QVector>
 
-// ======================================================
-// ESTADOS DEL PERSONAJE
-// ======================================================
-
 enum class EstadoSnowMan
 {
     IDLE,
@@ -25,46 +21,23 @@ enum class EstadoSnowMan
     MUERTO
 };
 
-// ======================================================
-// CLASE SNOWMAN
-// ======================================================
-
 class SnowMan : public entidad
 {
 public:
 
-    // ==================================================
-    // CONSTRUCTOR
-    // ==================================================
-
-    SnowMan(float x,
-            float y,
-            float ancho,
-            float alto,
-            fisicas* physics,
-            int vidas = 3);
+    SnowMan(float x,float y,float ancho,float alto,fisicas* physics,int vidas = 3);
 
     ~SnowMan() override = default;
 
-    // ==================================================
-    // CICLO PRINCIPAL
-    // ==================================================
-
     void updateLogic(float dt) override;
 
-    void renderizar(QPainter* painter);
+    void renderizar(QPainter* painter,float camaraX = 0);
 
-    // ==================================================
-    // INPUT
-    // ==================================================
 
     void manejarTeclaPresionada(Qt::Key key);
 
     void manejarTeclaLiberada(Qt::Key key);
 
-    // ==================================================
-    // MOVIMIENTO
-    // ==================================================
 
     void moverIzquierda(float dt);
 
@@ -76,23 +49,14 @@ public:
 
     void saltar();
 
-    // ==================================================
-    // POWER UPS
-    // ==================================================
 
     void recogerCopo();
 
     void recogerDiamante(int puntos = 100);
 
-    // ==================================================
-    // DAÑO
-    // ==================================================
 
     void recibirDanio(int cantidad = 1);
 
-    // ==================================================
-    // GETTERS
-    // ==================================================
 
     int getVidas() const;
 
@@ -104,9 +68,6 @@ public:
 
     EstadoSnowMan getEstado() const;
 
-    // ==================================================
-    // LÍMITES DEL MAPA
-    // ==================================================
 
     void setLimites(QRectF limites);
     //sprites
@@ -117,12 +78,10 @@ public:
     void setChocando(bool estado);
 
     void setNivelActual(int nivel);
+    void setVelocidadAuto(float v);
 
 private:
 
-    // ==================================================
-    // ATRIBUTOS
-    // ==================================================
 
     int vidas;
 
@@ -158,9 +117,6 @@ private:
 
     bool tieneLimites;
 
-    // ==================================================
-    // MÉTODOS PRIVADOS
-    // ==================================================
 
     void actualizarBoost(float dt);
 
@@ -180,6 +136,7 @@ private:
     bool chocando;
 
     int nivelActual;
+
 };
 
 #endif // SNOWMAN_H

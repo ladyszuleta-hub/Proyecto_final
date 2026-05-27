@@ -4,14 +4,12 @@
 #include <stdexcept>
 #include <QPen>
 
-// ======================================================
-// CONSTRUCTOR
-// ======================================================
 
 FireEnemy::FireEnemy(float x,float y,float ancho,float alto,fisicas* physics,FireAgent* agent)
 
     : entidad(x,y,ancho,alto,physics)
 {
+    estrategiaActual = new EstrategiaPersecucion();
     this->agent = agent;
 
     target = nullptr;
@@ -31,8 +29,8 @@ FireEnemy::FireEnemy(float x,float y,float ancho,float alto,fisicas* physics,Fir
 // DESTRUCTOR
 // ======================================================
 
-FireEnemy::~FireEnemy()
-{
+FireEnemy::~FireEnemy(){
+    delete estrategiaActual;
 }
 
 // ======================================================
@@ -54,12 +52,41 @@ void FireEnemy::updateLogic(float dt)
     else
     {
         // seek simple
-        simpleSeek(dt);
-    }
+        float dx =
+            target->getPosicion().getX()
+            - posicion.getX();
 
-    // ==========================================
+        float dy =
+            target->getPosicion().getY()
+            - posicion.getY();
+
+        float distancia =
+            std::sqrt(dx*dx + dy*dy);
+
+        // =============================
+        // CAMBIO DE ESTRATEGIA
+        // =============================
+
+        delete estrategiaActual;
+
+        if(distancia < 120)
+        {
+            estrategiaActual =
+                new EstrategiaAtaque();
+        }
+        else
+        {
+            estrategiaActual =
+                new EstrategiaPersecucion();
+        }
+
+        // EJECUTAR IA
+
+        estrategiaActual->ejecutar(
+            this,
+            target);
+    }
     // DAÑO AL JUGADOR
-    // ==========================================
 
     if(target->isAlive())
     {
@@ -81,9 +108,7 @@ void FireEnemy::updateLogic(float dt)
     }
 }
 
-// ======================================================
 // SEEK SIMPLE
-// ======================================================
 
 void FireEnemy::simpleSeek(float dt)
 {
@@ -116,12 +141,9 @@ void FireEnemy::simpleSeek(float dt)
 
     (void)dt;
 }
-
-// ======================================================
 // RENDER
-// ======================================================
 
-void FireEnemy::renderizar(QPainter* painter)
+void FireEnemy::renderizar(QPainter* painter,float camaraX)
 {
     if(!activo)
         return;
@@ -192,9 +214,7 @@ void FireEnemy::renderizar(QPainter* painter)
     painter->restore();
 }
 
-// ======================================================
 // ACCIONES
-// ======================================================
 
 void FireEnemy::ejecutarAccion(TipoAccion accion)
 {
@@ -256,9 +276,7 @@ void FireEnemy::ejecutarAccion(TipoAccion accion)
     }
 }
 
-// ======================================================
 // PROYECTIL
-// ======================================================
 
 bool FireEnemy::lanzarProyectil()
 {
@@ -268,9 +286,7 @@ bool FireEnemy::lanzarProyectil()
     return true;
 }
 
-// ======================================================
 // GETTERS
-// ======================================================
 
 EstadoFireEnemy FireEnemy::getEstado() const
 {

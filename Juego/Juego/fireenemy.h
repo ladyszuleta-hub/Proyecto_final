@@ -2,6 +2,7 @@
 #define FIREENEMY_H
 
 #include "entidad.h"
+#include "estrategia.h"
 #include <QPainter>
 
     // Forward declaration
@@ -27,52 +28,30 @@ enum class TipoAccion
     PATRULLAR
 };
 
-// ======================================================
-// FIRE ENEMY
-// ======================================================
-
 class FireEnemy : public entidad
 {
 public:
 
-    FireEnemy(float x,
-              float y,
-              float ancho,
-              float alto,
-              fisicas* physics,
-              FireAgent* agent = nullptr);
+    FireEnemy(float x,float y,float ancho,float alto,fisicas* physics, FireAgent* agent = nullptr);
 
     ~FireEnemy() override;
 
-    // ==========================================
     // GAME LOOP
-    // ==========================================
 
     void updateLogic(float dt) override;
 
-    void renderizar(QPainter* painter);
-
-    // ==========================================
+    void renderizar(QPainter* painter,float camaraX = 0);
     // TARGET
-    // ==========================================
 
     void setTarget(SnowMan* target);
-
-    // ==========================================
     // IA
-    // ==========================================
 
     void ejecutarAccion(TipoAccion accion);
 
-    // ==========================================
     // PROYECTILES
-    // ==========================================
 
     bool lanzarProyectil();
-
-    // ==========================================
     // GETTERS
-    // ==========================================
 
     EstadoFireEnemy getEstado() const;
 
@@ -94,11 +73,8 @@ private:
 
     float animTimer;
 
-    // ==========================================
-    // SEEK SIMPLE
-    // ==========================================
-
     void simpleSeek(float dt);
+    Estrategia* estrategiaActual;
 };
 
 #endif // FIREENEMY_H
