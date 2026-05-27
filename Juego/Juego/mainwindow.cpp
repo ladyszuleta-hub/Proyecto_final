@@ -4,10 +4,9 @@
 #include <QPainter>
 #include <QMessageBox>
 
-MainWindow::MainWindow(QWidget *parent)
-    : QMainWindow(parent)
-    , ui(new Ui::MainWindow)
+MainWindow::MainWindow(QWidget *parent): QMainWindow(parent), ui(new Ui::MainWindow)
 {
+    nivel2 = nullptr;
     ui->setupUi(this);
     nivel1 = nullptr;
 
@@ -59,6 +58,41 @@ MainWindow::MainWindow(QWidget *parent)
             nivel1 = new Nivel1();
 
             // INICIAR TIMER
+
+            timer->start(16);
+
+            update();
+        });
+
+//borrar cuando termines el nivel 1, es solo para probar nivel 2
+    connect(
+        ui->btnNivel2,
+        &QPushButton::clicked,
+
+        this,
+
+        [=]()
+        {
+            juegoIniciado = true;
+
+            // ocultar menu
+            ui->label->hide();
+
+            ui->btnJugar->hide();
+
+            ui->btnNivel2->hide();
+
+            ui->btnSalir->hide();
+
+            ui->btnOpciones->hide();
+
+            ui->btnCreditos->hide();
+
+            // crear nivel 2
+            nivel2 = new Nivel2();
+
+            fondoActual = QPixmap(
+                ":/img/Recursos/fondo_n2.png");
 
             timer->start(16);
 
@@ -130,8 +164,19 @@ MainWindow::MainWindow(QWidget *parent)
         [=]()
         {
             if(juegoIniciado)
-            {
-                nivel1->actualizar(0.016f);
+            {   // borrar cuando este liso el nivel 1
+                if(nivel1 != nullptr)
+                {
+                // borrar cuando este liso el nivel 1
+                    nivel1->actualizar(0.016f);
+                }
+                // borrar cuando este liso el nivel 1
+                if(nivel2 != nullptr)
+                {
+                // borrar cuando este liso el nivel 1
+                    nivel2->actualizar(0.016f);
+                }
+                /*nivel1->actualizar(0.016f);*/ //descomentar cuando el nivel 1 este listo, es solo para probar el nivel 2 sin pasar por el nivel 1
 
                 // REDIBUJAR
 
@@ -145,6 +190,7 @@ MainWindow::~MainWindow()
     delete nivel1;
 
     delete ui;
+    delete nivel2;
 }
 
 // DIBUJAR
@@ -165,24 +211,54 @@ void MainWindow::paintEvent(QPaintEvent *event)
 
     if(juegoIniciado)
     {
-        nivel1->renderizar(&painter);
+        if(nivel1 != nullptr)
+        {
+         //borrar cuando este listo el nivel 1
+            nivel1->renderizar(&painter);
+        }
+        //borrar cuando este listo el nivel 1
+        if(nivel2 != nullptr)
+        {
+        //borrar cuando este listo el nivel 1
+            nivel2->renderizar(&painter);
+        }
+        /*nivel1->renderizar(&painter);*/ //descomentar cuando este listo el nivel 1
     }
 }
 
 // TECLADO
 
 void MainWindow::keyPressEvent(QKeyEvent *event)
-{
-    if(juegoIniciado)
-    {
+{    //borrar cuando este listo el nivel 1
+    if(nivel1 != nullptr)
+    {//borrar cuando este listo el nivel 1
         nivel1->manejarTeclaPresionada(event);
     }
+    //borrar cuando este listo el nivel 1
+    if(nivel2 != nullptr)
+    {//borrar cuando este listo el nivel 1
+        nivel2->manejarTeclaPresionada(event);
+    }
+
+    /*if(juegoIniciado)
+    {
+        nivel1->manejarTeclaPresionada(event);
+    }*/
 }
 
 void MainWindow::keyReleaseEvent(QKeyEvent *event)
-{
-    if(juegoIniciado)
+{//borrar cuando este listo el nivel 1
+    if(nivel1 != nullptr)
+    {//borrar cuando este listo el nivel 1
+        nivel1->manejarTeclaLiberada(event);
+    }//borrar cuando este listo el nivel 1
+
+    if(nivel2 != nullptr)
+    {//borrar cuando este listo el nivel 1
+        nivel2->manejarTeclaLiberada(event);
+    }
+    /*if(juegoIniciado)                     //descomentar cuando este listo el nivel 1
     {
         nivel1->manejarTeclaLiberada(event);
-    }
+    }*/
 }

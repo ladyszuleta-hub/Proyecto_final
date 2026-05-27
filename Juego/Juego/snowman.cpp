@@ -6,16 +6,9 @@
 #include <QDebug>
 
 
-// ======================================================
 // CONSTRUCTOR
-// ======================================================
 
-SnowMan::SnowMan(float x,
-                 float y,
-                 float ancho,
-                 float alto,
-                 fisicas* physics,
-                 int vidas)
+SnowMan::SnowMan(float x, float y,float ancho,float alto,fisicas* physics,int vidas)
 
     : entidad(x,y,ancho,alto,physics)
 {
@@ -58,9 +51,6 @@ SnowMan::SnowMan(float x,
     cargarFrames();
 }
 
-// ======================================================
-// UPDATE LOGIC
-// ======================================================
 
 void SnowMan::updateLogic(float dt)
 {
@@ -90,7 +80,10 @@ void SnowMan::updateLogic(float dt)
 
 
     // Movimiento automático vertical
-    velocidad.setY(velocidadAuto);
+    if(nivelActual == 1)
+    {
+        velocidad.setY(velocidadAuto);
+    }
 
     // Timers
     actualizarBoost(dt);
@@ -121,105 +114,26 @@ void SnowMan::updateLogic(float dt)
     }
 }
 
-// ======================================================
-// RENDER
-// ======================================================
-
-/*void SnowMan::renderizar(QPainter* painter)
-{
-    if (frames.empty())
-        return;
-    if(!activo)
-        return;
-
-    painter->save();
-
-    QColor colorCuerpo;
-
-    if(estado == EstadoSnowMan::GOLPEADO)
-    {
-        colorCuerpo = QColor(255,100,100,180);
-    }
-    else
-    {
-        colorCuerpo = QColor(255,255,255,255);
-    }
-
-    // Cuerpo inferior
-    painter->setBrush(colorCuerpo);
-
-    painter->setPen(Qt::darkGray);
-
-    painter->drawEllipse(
-        QRectF(posicion.getX(),
-               posicion.getY()+24,
-               40,
-               24));
-
-    // Cuerpo medio
-    painter->drawEllipse(
-        QRectF(posicion.getX()+5,
-               posicion.getY()+8,
-               30,
-               24));
-
-    // Cabeza
-    painter->drawEllipse(
-        QRectF(posicion.getX()+10,
-               posicion.getY(),
-               20,
-               20));
-
-    // Ojos
-    painter->setBrush(Qt::black);
-
-    painter->drawEllipse(
-        QRectF(posicion.getX()+14,
-               posicion.getY()+5,
-               4,
-               4));
-
-    painter->drawEllipse(
-        QRectF(posicion.getX()+22,
-               posicion.getY()+5,
-               4,
-               4));
-
-    // Aura boost
-    if(boostVelocidadActivo)
-    {
-        painter->setBrush(Qt::NoBrush);
-
-        painter->setPen(
-            QPen(QColor(100,200,255,160),3));
-
-        painter->drawEllipse(
-            QRectF(posicion.getX()-5,
-                   posicion.getY()-5,
-                   50,
-                   58));
-    }
-
-    painter->restore();
-}*/
-void SnowMan::renderizar(QPainter* painter)
+void SnowMan::renderizar(QPainter* painter,float camaraX)
 {
     if(frames.empty())
         return;
 
     painter->drawPixmap(
-        QRectF(posicion.getX(),posicion.getY(),ancho,alto),
+        QRectF(
+            posicion.getX() - camaraX,
+
+            posicion.getY(),
+
+            ancho,
+
+            alto),
 
         frames[frameActual],
 
         frames[frameActual].rect()
         );
 }
-
-// ======================================================
-// INPUT
-// ======================================================
-
 void SnowMan::manejarTeclaPresionada(Qt::Key key)
 {
     switch(key)
@@ -281,10 +195,6 @@ void SnowMan::manejarTeclaLiberada(Qt::Key key)
     }
 }
 
-// ======================================================
-// MOVIMIENTO
-// ======================================================
-
 void SnowMan::moverIzquierda(float dt)
 {
     aplicarfuerza(
@@ -307,10 +217,6 @@ void SnowMan::moverAbajo(float dt)
     aplicarfuerza(Vector2D(0,speed),dt);
 }
 
-// ======================================================
-// SALTO
-// ======================================================
-
 void SnowMan::saltar()
 {
     GravityPhysics* gp =
@@ -327,10 +233,6 @@ void SnowMan::saltar()
     estado = EstadoSnowMan::SALTANDO;
 }
 
-// ======================================================
-// BOOST
-// ======================================================
-
 void SnowMan::recogerCopo()
 {
     boostVelocidadActivo = true;
@@ -342,9 +244,6 @@ void SnowMan::recogerCopo()
     speed *= 1.8f;
 }
 
-// ======================================================
-// DIAMANTE
-// ======================================================
 
 void SnowMan::recogerDiamante(int puntos)
 {
@@ -356,10 +255,6 @@ void SnowMan::recogerDiamante(int puntos)
 
     puntaje += puntos;
 }
-
-// ======================================================
-// DAÑO
-// ======================================================
 
 void SnowMan::recibirDanio(int cantidad)
 {
@@ -383,10 +278,6 @@ void SnowMan::recibirDanio(int cantidad)
         activo = false;
     }
 }
-
-// ======================================================
-// GETTERS
-// ======================================================
 
 int SnowMan::getVidas() const
 {
@@ -412,11 +303,6 @@ EstadoSnowMan SnowMan::getEstado() const
 {
     return estado;
 }
-
-// ======================================================
-// LIMITES
-// ======================================================
-
 void SnowMan::setLimites(QRectF limites)
 {
     limitesMapa = limites;
@@ -424,9 +310,6 @@ void SnowMan::setLimites(QRectF limites)
     tieneLimites = true;
 }
 
-// ======================================================
-// BOOST TIMER
-// ======================================================
 
 void SnowMan::actualizarBoost(float dt)
 {
@@ -444,10 +327,6 @@ void SnowMan::actualizarBoost(float dt)
         speed = velocidadNormal;
     }
 }
-
-// ======================================================
-// HIT TIMER
-// ======================================================
 
 void SnowMan::actualizarHit(float dt)
 {
@@ -469,9 +348,6 @@ void SnowMan::actualizarHit(float dt)
     }
 }
 
-// ======================================================
-// LIMITAR MAPA
-// ======================================================
 
 void SnowMan::limitarDentroMapa()
 {
@@ -566,4 +442,12 @@ void SnowMan::setChocando(bool estado)
         this->estado =
             EstadoSnowMan::GOLPEADO;
     }
+}
+void SnowMan::setVelocidadAuto(float v)
+{
+    velocidadAuto = v;
+}
+void SnowMan::setNivelActual(int nivel)
+{
+    nivelActual = nivel;
 }

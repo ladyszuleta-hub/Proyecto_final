@@ -10,11 +10,13 @@ CONFIG += c++17
 
 SOURCES += \
     entidad.cpp \
+    estrategia.cpp \
     fireenemy.cpp \
     fisicas.cpp \
     main.cpp \
     mainwindow.cpp \
     nivel1.cpp \
+    nivel2.cpp \
     objetojuego.cpp \
     obstaculo.cpp \
     premio.cpp \
@@ -24,10 +26,12 @@ SOURCES += \
 
 HEADERS += \
     entidad.h \
+    estrategia.h \
     fireenemy.h \
     fisicas.h \
     mainwindow.h \
     nivel1.h \
+    nivel2.h \
     objetoJuego.h \
     obstaculo.h \
     premio.h \

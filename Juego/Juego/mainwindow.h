@@ -8,6 +8,7 @@
 #include "nivel1.h"
 #include "fireenemy.h"
 #include "snowman.h"
+#include "nivel2.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -41,6 +42,7 @@ private:
     QTimer* timer;
     Nivel1* nivel1;
     bool juegoIniciado;
+    Nivel2* nivel2;
 
 
     float dt;
