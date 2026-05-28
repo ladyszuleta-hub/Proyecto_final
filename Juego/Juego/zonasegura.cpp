@@ -13,7 +13,7 @@ void ZonaSegura::actualizar(float deltaTime){
     (void)deltaTime;
 }
 
-void ZonaSegura::renderizar(){}
+void ZonaSegura::renderizar(QPainter* painter){}
 
 // Actualiza si el portal ya puede abrirse
 void ZonaSegura::actualizarEstado(int puntosJugador){

@@ -4,5 +4,12 @@
         <file>Recursos/menuprinc.png</file>
         <file>Recursos/snow.png</file>
         <file>Recursos/fondo_n2.png</file>
+        <file>Recursos/caja.png</file>
+        <file>Recursos/copo.png</file>
+        <file>Recursos/diamante.png</file>
+        <file>Recursos/gameover.png</file>
+        <file>Recursos/hielo.png</file>
+        <file>Recursos/vida.png</file>
+        <file>Recursos/roca.png</file>
     </qresource>
 </RCC>

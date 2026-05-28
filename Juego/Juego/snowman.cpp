@@ -80,10 +80,10 @@ void SnowMan::updateLogic(float dt)
 
 
     // Movimiento automático vertical
-    if(nivelActual == 1)
+    /*if(nivelActual == 1)
     {
         velocidad.setY(velocidadAuto);
-    }
+    }*/
 
     // Timers
     actualizarBoost(dt);
@@ -107,6 +107,14 @@ void SnowMan::updateLogic(float dt)
         {
             estado = EstadoSnowMan::MOVIENDO_DERECHA;
         }
+        else if(moviendoAbajo)
+        {
+            estado = EstadoSnowMan::MOVIENDO_ABAJO;
+        }
+        else if(moviendoArriba)
+        {
+            estado = EstadoSnowMan::MOVIENDO_ARRIBA;
+        }
         else
         {
             estado = EstadoSnowMan::IDLE;
@@ -116,6 +124,8 @@ void SnowMan::updateLogic(float dt)
 
 void SnowMan::renderizar(QPainter* painter,float camaraX)
 {
+    if(!activo)
+        return;
     if(frames.empty())
         return;
 
@@ -156,6 +166,7 @@ void SnowMan::manejarTeclaPresionada(Qt::Key key)
     case Qt::Key_Down:
     case Qt::Key_S:
         moviendoAbajo=true;
+        break;
 
     case Qt::Key_Space:
 
@@ -189,6 +200,7 @@ void SnowMan::manejarTeclaLiberada(Qt::Key key)
     case Qt::Key_Down:
     case Qt::Key_S:
         moviendoAbajo=false;
+        break;
 
     default:
         break;
@@ -224,8 +236,7 @@ void SnowMan::saltar()
 
     if(gp == nullptr)
     {
-        throw std::logic_error(
-            "No tiene fisica de gravedad");
+        return;
     }
 
     gp->jump(velocidad,300.0f);
@@ -360,6 +371,16 @@ void SnowMan::limitarDentroMapa()
     {
         posicion.setX(
             limitesMapa.right() - ancho);
+    }
+    if(posicion.getY() < limitesMapa.top())
+    {
+        posicion.setY(limitesMapa.top());
+    }
+
+    // ABAJO
+    if(posicion.getY() + alto > limitesMapa.bottom())
+    {
+        posicion.setY(limitesMapa.bottom() - alto);
     }
 }
 void SnowMan::cargarFrames()
