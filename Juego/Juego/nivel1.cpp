@@ -23,24 +23,25 @@ Nivel1::Nivel1()
 }
 void Nivel1::crearObstaculos()
 {
-    obstaculos.push_back(new obstaculo(250,180,120,120,"roca"));
+    obstaculos.push_back(new obstaculo(250,180,80,80,"roca"));
 
-    obstaculos.push_back(new obstaculo(700, 220, 100, 180, "hielo"));
+    obstaculos.push_back(new obstaculo(700, 220, 90,90,"hielo"));
 
-    obstaculos.push_back(new obstaculo(500,500,180, 100,"roca"));
+    obstaculos.push_back(new obstaculo(500,500,70,70,"caja"));
 }
 void Nivel1::generarVidas()
 {
     for(int i=0;i<2;i++)
     {
-        vidasExtra.push_back(new premio(rand()%1100,rand()%620,1));
+        vidasExtra.push_back(new premio(rand()%1100,rand()%620,"vida",0));
     }
 }
 void Nivel1::generarPremios()
 {
     for(int i=0;i<8;i++)
     {
-        premios.push_back(new premio(rand()%1100,rand()%620,100));
+        premios.push_back(new premio(rand()%1100,rand()%620,"diamante",0));
+        premios.push_back(new premio(rand()%1100,rand()%620,"copo",0));
     }
 }
 void Nivel1::detectarColisiones()
@@ -64,12 +65,20 @@ void Nivel1::detectarColisiones()
     for(auto premio : premios)
     {
         if(premio->estaActivo() && jugador->colisionaCon(*premio))
-        {
-            jugador->recogerDiamante(premio->getPuntos());
+            {if(premio->getTipo() == "copo")
+                {
+                    jugador->recogerCopo();
+                }
+                else
+                {
+                    jugador->recogerDiamante(
+                        premio->getPuntos()
+                        );
+                }
 
-            premio->setActivo(false);
+                premio->setActivo(false);
+            }
         }
-    }
 
     for(auto vida : vidasExtra)
     {
@@ -93,14 +102,14 @@ void Nivel1::renderizar(QPainter* painter)
 
     for(auto obstaculo : obstaculos)
     {
-        obstaculo->renderizar();
+        obstaculo->renderizar( painter);
     }
 
     for(auto premio : premios)
     {
         if(premio->estaActivo())
         {
-            premio->renderizar();
+            premio->renderizar(painter);
         }
     }
 
@@ -108,11 +117,11 @@ void Nivel1::renderizar(QPainter* painter)
     {
         if(vida->estaActivo())
         {
-            vida->renderizar();
+            vida->renderizar(painter);
         }
     }
 
-    portal->renderizar();
+    portal->renderizar(painter);
     painter->setPen(Qt::black);
 
     painter->setFont(
@@ -153,7 +162,7 @@ Nivel1::~Nivel1()
 {
     delete jugador;
 
-    //delete enemigo;
+    delete enemigo;
 
     delete portal;
 

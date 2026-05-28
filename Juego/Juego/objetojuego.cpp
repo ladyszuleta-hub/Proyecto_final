@@ -19,8 +19,15 @@ void ObjetoJuego::actualizar(float deltaTime)
 {
 }
 
-void ObjetoJuego::renderizar()
+void ObjetoJuego::renderizar(QPainter* painter)
 {
+    if(!activo)
+        return;
+
+    if(sprite.isNull())
+        return;
+
+    painter->drawPixmap(QRectF(posicion.getX(),posicion.getY(),ancho,alto),sprite,sprite.rect());
 }
 
 // Colisión simple rectangular
@@ -49,4 +56,14 @@ bool ObjetoJuego::estaActivo() const
 void ObjetoJuego::setActivo(bool estado)
 {
     activo = estado;
+}
+void ObjetoJuego::setSprite(const QString& ruta)
+{
+    sprite.load(ruta);
+}
+
+void ObjetoJuego::setPosicion(float x,float y)
+{
+    posicion.setX(x);
+    posicion.setY(y);
 }

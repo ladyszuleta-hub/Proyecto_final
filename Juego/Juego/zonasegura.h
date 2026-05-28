@@ -14,7 +14,7 @@ public:
 
     void actualizar(float deltaTime) override;
 
-    void renderizar() override;
+    void renderizar(QPainter* painter) override;
 
     void actualizarEstado(int puntosJugador);
 
