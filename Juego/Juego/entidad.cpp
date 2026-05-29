@@ -113,3 +113,7 @@ void entidad::setSpeed(float s)
 
     speed = s;
 }
+fisicas* entidad::getPhysics() const
+{
+    return physics;
+}

@@ -203,10 +203,12 @@ void MainWindow::paintEvent(QPaintEvent *event)
 
     // DIBUJAR FONDO
 
-    painter.drawPixmap(
-        rect(),
-        fondoActual);
-
+    if(nivel2 == nullptr)
+    {
+        painter.drawPixmap(
+            rect(),
+            fondoActual);
+    }
     // DIBUJAR GAMEPLAY
 
     if(juegoIniciado)

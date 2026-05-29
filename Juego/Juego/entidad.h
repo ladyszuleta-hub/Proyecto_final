@@ -39,6 +39,9 @@ public:
 
     void setSpeed(float s);
 
+
+    fisicas* getPhysics() const;
+
 protected:
     virtual void updateLogic(float dt) = 0;
 

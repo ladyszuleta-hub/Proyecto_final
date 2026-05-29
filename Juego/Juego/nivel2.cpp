@@ -2,7 +2,7 @@
 #include <QKeyEvent>
 #include <QBrush>
 #include <QPen>
-
+#include <QMessageBox>
 // ======================================================
 // CONSTRUCTOR
 // ======================================================
@@ -14,7 +14,7 @@ Nivel2::Nivel2()
     camaraX = 0;
 
     fondoNivel.load(
-        ":/img/Recursos/fondo_n2_largo.png");
+        ":/img/Recursos/fondo_n22.png");
 
     crearNivel();
 }
@@ -25,8 +25,7 @@ Nivel2::Nivel2()
 
 Nivel2::~Nivel2()
 {
-    fondoNivel.load(
-        ":/img/Recursos/fondo_n2.png");
+    fondoNivel.load( ":/img/Recursos/fondo_n2.png");
     delete jugador;
 
     delete portal;
@@ -77,47 +76,34 @@ void Nivel2::crearNivel()
         QRectF(0,0,5000,768));
 
     // ==================================================
-    // ENEMIGOS
+    // ENEMIGO
     // ==================================================
 
     FireEnemy* enemigo1 =
         new FireEnemy(
-            1400,
-            560,
+            2500,
+            240,
             48,
             48,
 
-            new FrictionPhysics(0.03f));
+            new FrictionPhysics(0.03f),
+            nullptr);
 
     enemigo1->setTarget(jugador);
 
     enemigos.push_back(enemigo1);
 
-    FireEnemy* enemigo2 =
-        new FireEnemy(
-            2800,
-            520,
-            48,
-            48,
+    // ==================================================
+    // SUELO PRINCIPAL
+    // ==================================================
 
-            new FrictionPhysics(0.03f));
-
-    enemigo2->setTarget(jugador);
-
-    enemigos.push_back(enemigo2);
-
-    FireEnemy* enemigo3 =
-        new FireEnemy(
-            4000,
-            380,
-            48,
-            48,
-
-            new FrictionPhysics(0.03f));
-
-    enemigo3->setTarget(jugador);
-
-    enemigos.push_back(enemigo3);
+    plataformas.push_back(
+        new obstaculo(
+            0,
+            650,
+            1200,
+            50,
+            "suelo"));
 
     // ==================================================
     // PLATAFORMAS
@@ -125,60 +111,63 @@ void Nivel2::crearNivel()
 
     plataformas.push_back(
         new obstaculo(
-            0,
-            650,
-            800,
-            50,
-            "suelo"));
-
-    plataformas.push_back(
-        new obstaculo(
             900,
-            600,
-            300,
-            40,
-            "plataforma"));
-
-    plataformas.push_back(
-        new obstaculo(
-            1400,
             520,
-            300,
+            250,
             40,
             "plataforma"));
 
     plataformas.push_back(
         new obstaculo(
-            1900,
-            450,
-            300,
-            40,
-            "plataforma"));
-
-    plataformas.push_back(
-        new obstaculo(
-            2500,
-            600,
-            500,
-            40,
-            "plataforma"));
-
-    plataformas.push_back(
-        new obstaculo(
-            3300,
-            500,
-            400,
-            40,
-            "plataforma"));
-
-    plataformas.push_back(
-        new obstaculo(
-            4200,
+            1500,
             420,
-            500,
+            250,
             40,
             "plataforma"));
 
+    plataformas.push_back(
+        new obstaculo(
+            2200,
+            320,
+            250,
+            40,
+            "plataforma"));
+
+    plataformas.push_back(
+        new obstaculo(
+            3000,
+            500,
+            250,
+            40,
+            "plataforma"));
+
+    plataformas.push_back(
+        new obstaculo(
+            3600,
+            380,
+            250,
+            40,
+            "plataforma"));
+
+    plataformas.push_back(
+        new obstaculo(
+            4300,
+            250,
+            250,
+            40,
+            "plataforma"));
+
+    // ==================================================
+    // PORTAL FINAL
+    // ==================================================
+
+    portal = new ZonaSegura(
+        4700,
+        140,
+        100,
+        120,
+        0);
+}
     // ==================================================
     // PREMIOS
     // ==================================================
@@ -207,22 +196,6 @@ void Nivel2::crearNivel()
             360,
             100));
 */
-    // ==================================================
-    // PORTAL
-    // ==================================================
-
-    portal = new ZonaSegura(
-        4700,
-        300,
-        100,
-        120,
-        300);
-}
-
-// ======================================================
-// UPDATE
-// ======================================================
-
 void Nivel2::actualizar(float dt)
 {
     if(completado)
@@ -252,6 +225,23 @@ void Nivel2::actualizar(float dt)
 
     actualizarPortal();
 
+    // ======================================
+    // CAER AL VACIO
+    // ======================================
+
+    if(jugador->getPosicion().getY() > 900)
+    {
+        jugador->recibirDanio(1);
+
+        // volver al inicio
+
+        jugador->setPosicion(100,500);
+
+        Vector2D vel(0,0);
+
+        jugador->setVelocity(vel);
+    }
+
     // GANAR
 
     if(portal->estaDesbloqueada())
@@ -260,6 +250,15 @@ void Nivel2::actualizar(float dt)
         {
             completado = true;
         }
+    }
+    if(jugador->getPosicion().getX() >= 3200)
+    {
+        completado = true;
+
+        QMessageBox::information(
+            nullptr,
+            "GANASTE",
+            "Nivel completado");
     }
 }
 
@@ -297,11 +296,44 @@ void Nivel2::verificarColisiones()
             }
         }
     }
+    for(auto plataforma : plataformas)
+    {
+        if(jugador->colisionaCon(*plataforma))
+        {
+            // SOLO si viene cayendo
+
+            if(jugador->getVelocity().getY() > 0)
+            {
+                jugador->setPosicion(
+                    jugador->getPosicion().getX(),
+
+                    plataforma->getPosicion().getY()
+                        - 70);
+
+                Vector2D vel =
+                    jugador->getVelocity();
+
+                vel.setY(0);
+
+                jugador->setVelocity(vel);
+
+                GravityPhysics* gp =
+                    dynamic_cast<GravityPhysics*>(
+                        jugador->getPhysics());
+
+                if(gp != nullptr)
+                {
+                    gp->setGrounded(true);
+                }
+
+
+            }
+
+        }
+
+    }
 }
 
-// ======================================================
-// PORTAL
-// ======================================================
 
 void Nivel2::actualizarPortal()
 {
@@ -313,132 +345,83 @@ void Nivel2::actualizarPortal()
 // RENDER
 // ======================================================
 
-void Nivel2::renderizar(QPainter* painter)
+void Nivel2::renderizar(QPainter *painter)
 {
-    painter->drawPixmap(
-        QRectF(0,0,1366,768),
+    // =========================================
+    // CAMARA
+    // =========================================
 
-        fondoNivel,
+    camaraX = jugador->getPosicion().getX() - 400;
 
-        QRectF(
-            camaraX * 0.3f,
-            0,
-            1366,
-            768));
+    if(camaraX < 0)
+        camaraX = 0;
+
+    // limite final del mapa
+    if(camaraX > 2500)
+        camaraX = 2500;
+
+    // =========================================
     // FONDO
+    // =========================================
 
-    painter->drawPixmap(QRectF(0,0,1366,768),fondoNivel,
+    painter->drawPixmap(
+        QRect(0,0,1366,768),
+        fondoNivel,
+        QRect(camaraX,0,1366,768));
 
-        QRect(
-            camaraX,
-            0,
-            1366,
-            768));
-
-    // LAVA
-
-    painter->setBrush(
-        QColor(255,80,0));
-
-    painter->setPen(Qt::NoPen);
-
-    painter->drawRect(
-        QRectF(
-            0,
-            680,
-            1366,
-            88));
-
+    // =========================================
     // PLATAFORMAS
+    // =========================================
 
-    painter->setBrush(
-        QColor(80,80,80));
-
-    for(auto p : plataformas)
+    for(auto plataforma : plataformas)
     {
-        painter->drawRect(
-            QRectF(p->getPosicion().getX()- camaraX,
+        painter->save();
 
-                p->getPosicion().getY(),
+        painter->translate(-camaraX,0);
 
-                200,
+        plataforma->renderizar(painter);
 
-                40));
+        painter->restore();
     }
 
-    // PREMIOS
-
-    for(auto pr : premios)
-    {
-        if(pr->estaActivo()){
-            painter->setBrush(QColor(0,255,255));
-
-            painter->drawEllipse(QRectF(pr->getPosicion().getX()- camaraX,
-
-                    pr->getPosicion().getY(),
-
-                    30,
-
-                    30));
-        }
-    }
-
-    // PORTAL
-
-    if(portal->estaDesbloqueada())
-    {
-        painter->setBrush(
-            QColor(100,255,100));
-    }
-    else
-    {
-        painter->setBrush(
-            QColor(120,120,120));
-    }
-
-    painter->drawRect(
-        QRectF(
-            portal->getPosicion().getX()
-                - camaraX,
-
-            portal->getPosicion().getY(),
-
-            100,
-
-            120));
-
+    // =========================================
     // ENEMIGOS
+    // =========================================
 
     for(auto enemigo : enemigos)
     {
-        enemigo->renderizar(painter,camaraX);
+        painter->save();
+
+        painter->translate(-camaraX,0);
+
+        enemigo->renderizar(painter);
+
+        painter->restore();
     }
 
+    // =========================================
     // JUGADOR
+    // =========================================
 
-    jugador->renderizar(
-        painter,
-        camaraX);
+    painter->save();
 
-    // HUD
+    painter->translate(-camaraX,0);
 
-    painter->setPen(Qt::white);
+    jugador->renderizar(painter);
 
-    painter->drawText(
-        20,
-        40,
+    painter->restore();
 
-        "VIDAS: "
-            + QString::number(
-                jugador->getVidas()));
+    // =========================================
+    // PORTAL FINAL
+    // =========================================
 
-    painter->drawText(
-        20,
-        80,
+    painter->save();
 
-        "PUNTAJE: "
-            + QString::number(
-                jugador->getPuntaje()));
+    painter->translate(-camaraX,0);
+
+    portal->renderizar(painter);
+
+    painter->restore();
 }
 void Nivel2::manejarTeclaPresionada(
     QKeyEvent* event)

@@ -81,8 +81,9 @@ void GravityPhysics::actualizar(Vector2D& pos,Vector2D& velocidad, float dt){
 void GravityPhysics::jump(Vector2D& velocidad,float jumpForce)
 {
     if(!isGrounded_)
-        throw std::logic_error(
-            "No puede saltar en el aire");
+    {
+        return;
+    }
 
     velocidad.setY(-jumpForce);
 
@@ -92,6 +93,10 @@ void GravityPhysics::jump(Vector2D& velocidad,float jumpForce)
 bool GravityPhysics::isGrounded() const
 {
     return isGrounded_;
+}
+void GravityPhysics::setGrounded(bool grounded)
+{
+    isGrounded_ = grounded;
 }
 
 
