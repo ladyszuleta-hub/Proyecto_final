@@ -52,6 +52,8 @@ public:
 
     bool isGrounded() const;
 
+    void setGrounded(bool grounded);
+
 private:
 
     float groundY_;
@@ -69,6 +71,7 @@ public:
     explicit WindPhysics(Vector2D windDirection = Vector2D(1,0),float windStrength = 200.0f);
 
     void actualizar(Vector2D& pos,Vector2D& velocidad, float dt) override;
+
 
 private:
 

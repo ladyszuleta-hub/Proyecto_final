@@ -49,6 +49,7 @@ SnowMan::SnowMan(float x, float y,float ancho,float alto,fisicas* physics,int vi
     nivelActual = 1;
 
     cargarFrames();
+    modoPlataforma = false;
 }
 
 
@@ -63,19 +64,22 @@ void SnowMan::updateLogic(float dt)
 
     if(moviendoDerecha)
         moverDerecha(dt);
-    if(moviendoArriba)
+
+    // ======================================
+    // SOLO NIVEL 1
+    // ======================================
+
+    if(nivelActual == 1)
     {
-        moverArriba(dt);
+        if(moviendoArriba)
+        {
+            moverArriba(dt);
+        }
 
-        //estado = EstadoSnowMan::MOVIENDO_ARRIBA;
-    }
-
-    if(moviendoAbajo)
-    {
-        moverAbajo(dt);
-
-        //estado = EstadoSnowMan::MOVIENDO_ABAJO;
-
+        if(moviendoAbajo)
+        {
+            moverAbajo(dt);
+        }
     }
 
 
@@ -161,7 +165,16 @@ void SnowMan::manejarTeclaPresionada(Qt::Key key)
         break;
     case Qt::Key_Up:
     case Qt::Key_W:
-        moviendoArriba = true;
+
+        if(nivelActual == 1)
+        {
+            moviendoArriba = true;
+        }
+        else
+        {
+            saltar();
+        }
+
         break;
     case Qt::Key_Down:
     case Qt::Key_S:
@@ -195,7 +208,12 @@ void SnowMan::manejarTeclaLiberada(Qt::Key key)
         break;
     case Qt::Key_Up:
     case Qt::Key_W:
-        moviendoArriba = false;
+
+        if(!modoPlataforma)
+        {
+            moviendoArriba = false;
+        }
+
         break;
     case Qt::Key_Down:
     case Qt::Key_S:
@@ -239,7 +257,7 @@ void SnowMan::saltar()
         return;
     }
 
-    gp->jump(velocidad,300.0f);
+    gp->jump(velocidad,650.0f);
 
     estado = EstadoSnowMan::SALTANDO;
 }
@@ -471,4 +489,8 @@ void SnowMan::setVelocidadAuto(float v)
 void SnowMan::setNivelActual(int nivel)
 {
     nivelActual = nivel;
+}
+void SnowMan::setModoPlataforma(bool estado)
+{
+    modoPlataforma = estado;
 }

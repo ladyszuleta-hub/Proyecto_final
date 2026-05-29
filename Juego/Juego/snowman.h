@@ -31,6 +31,9 @@ public:
 
     void updateLogic(float dt) override;
 
+    void setModoPlataforma(bool estado);
+
+
     void renderizar(QPainter* painter,float camaraX = 0);
 
 
@@ -100,6 +103,7 @@ private:
     bool invulnerable;
 
     float hitTimer;
+    bool modoPlataforma;
 
     // Movimiento continuo
     bool moviendoIzquierda;
