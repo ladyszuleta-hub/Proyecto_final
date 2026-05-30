@@ -43,6 +43,7 @@ public:
     void manejarTeclaPresionada(QKeyEvent* event);
 
     void manejarTeclaLiberada(QKeyEvent* event);
+    bool juegoTerminado() const;
 
 private:
 

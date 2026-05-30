@@ -11,5 +11,8 @@
         <file>Recursos/vida.png</file>
         <file>Recursos/roca.png</file>
         <file>Recursos/fondo_n2.png</file>
+        <file>Recursos/submenu1.png</file>
+        <file>Recursos/submenudific.png</file>
+        <file>Recursos/enemigo.png</file>
     </qresource>
 </RCC>
