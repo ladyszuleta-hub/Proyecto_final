@@ -4,11 +4,11 @@
 Nivel1::Nivel1()
 {
     enemigo = new FireEnemy(900,180,48,48,new FrictionPhysics(0.02f));
-    limitesMapa =QRectF(55,25,1100,640);
+    limitesMapa =QRectF(55,40,1265,665);
 
     puntosMinimos = 500;
 
-    jugador = new SnowMan(120,120,64,64,new FrictionPhysics());
+    jugador = new SnowMan(120,120,64,64,new FrictionPhysics(0.01));
 
     jugador->setLimites(limitesMapa);
     enemigo->setTarget(jugador);
@@ -40,8 +40,8 @@ void Nivel1::generarPremios()
 {
     for(int i=0;i<8;i++)
     {
-        premios.push_back(new premio(rand()%1100,rand()%620,"diamante",0));
-        premios.push_back(new premio(rand()%1100,rand()%620,"copo",0));
+        premios.push_back(new premio(rand()%1100,rand()%620,"diamante",50));
+        premios.push_back(new premio(rand()%1100,rand()%620,"copo",60));
     }
 }
 void Nivel1::detectarColisiones()
@@ -82,7 +82,7 @@ void Nivel1::detectarColisiones()
 
     for(auto vida : vidasExtra)
     {
-        if(vida->estaActivo() && jugador->colisionaCon(*vida))
+        if(jugador->colisionaCon(*vida))
         {
             jugador->setHealth(jugador->getHealth()+1);
 
@@ -188,4 +188,8 @@ void Nivel1::actualizar(float dt)
     portal->actualizarEstado(jugador->getPuntaje());
 
     detectarColisiones();
+}
+bool Nivel1::juegoTerminado() const
+{
+    return jugador->getVidas() <= 0;
 }

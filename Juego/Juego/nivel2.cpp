@@ -436,3 +436,7 @@ void Nivel2::manejarTeclaLiberada(
     jugador->manejarTeclaLiberada(
         static_cast<Qt::Key>(event->key()));
 }
+bool Nivel2::juegoTerminado() const
+{
+    return jugador->getVidas() <= 0;
+}

@@ -30,6 +30,7 @@ public:
     void manejarTeclaLiberada(QKeyEvent* event);
 
     bool nivelCompletado() const;
+    bool juegoTerminado() const;
 
 private:
 

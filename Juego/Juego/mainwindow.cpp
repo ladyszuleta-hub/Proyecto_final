@@ -1,6 +1,5 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
-#include "fireenemy.h"
 #include <QPainter>
 #include <QMessageBox>
 
@@ -13,10 +12,27 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent), ui(new Ui::MainWin
     // CONFIGURACION INICIAL
 
     juegoIniciado = false;
+    estadoMenu = MENU_PRINCIPAL;
 
-    fondoActual = QPixmap(
+    ui->btnnivel1->hide();
+    ui->btnNivel2->hide();
+    ui->btndificultad->hide();
+    ui->btnFacil->hide();
+    ui->btnNormal->hide();
+    ui->btnDificil->hide();
+
+    fondoMenuPrincipal = QPixmap(
         ":/img/Recursos/menuprinc.png");
 
+    fondoMenuNiveles = QPixmap(
+        ":/img/Recursos/submenu1.png");
+
+    fondoMenuDificultad = QPixmap(
+        ":/img/Recursos/submenudific.png");
+    fondoGameOver = QPixmap(
+        ":/img/Recursos/gameover.png");
+
+    fondoActual = fondoMenuPrincipal;
     setFixedSize(1366,768);
 
 
@@ -33,37 +49,85 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent), ui(new Ui::MainWin
         this,
 
         [=]()
-        {
-            // INICIAR JUEGO
+        {   
+            estadoMenu = MENU_NIVELES;
 
-            juegoIniciado = true;
-
-            // OCULTAR MENU
-            ui->label->hide();
+            fondoActual = fondoMenuNiveles;
 
             ui->btnJugar->hide();
-
             ui->btnSalir->hide();
-
+            ui->btnCreditos->hide();
             ui->btnOpciones->hide();
 
-            ui->btnCreditos->hide();
 
-            // CAMBIAR FONDO
+            ui->btnnivel1->show();
+            ui->btnNivel2->show();
+            ui->btndificultad->show();
+            update();
+        });
+
+    connect(
+        ui->btndificultad,
+        &QPushButton::clicked,
+
+        this,
+
+        [=]()
+        {
+            estadoMenu = MENU_DIFICULTAD;
+
+            fondoActual = fondoMenuDificultad;
+            ui->btnJugar->hide();
+            ui->btnSalir->hide();
+            ui->btnCreditos->hide();
+            ui->btnOpciones->hide();
+
+            ui->btnnivel1->hide();
+            ui->btnNivel2->hide();
+            ui->btndificultad->hide();
+
+            ui->btnFacil->show();
+            ui->btnNormal->show();
+            ui->btnDificil->show();
+
+            update();
+        });
+    connect(
+        ui->btnnivel1,
+        &QPushButton::clicked,
+
+        this,
+
+        [=]()
+        {
+            juegoIniciado = true;
+
+            estadoMenu = JUGANDO;
+
+            // ocultar botones de menú
+
+            ui->btnnivel1->hide();
+            ui->btnNivel2->hide();
+            ui->btndificultad->hide();
+
+            ui->btnFacil->hide();
+            ui->btnNormal->hide();
+            ui->btnDificil->hide();
+
+            // crear nivel 1
+            if(nivel1 == nullptr)
+            {
+                nivel1 = new Nivel1();
+            }
+            // fondo del nivel
 
             fondoActual = QPixmap(
                 ":/img/Recursos/fondo_n1.png");
-
-
-            nivel1 = new Nivel1();
-
-            // INICIAR TIMER
 
             timer->start(16);
 
             update();
         });
-
 //borrar cuando termines el nivel 1, es solo para probar nivel 2
     connect(
         ui->btnNivel2,
@@ -76,7 +140,7 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent), ui(new Ui::MainWin
             juegoIniciado = true;
 
             // ocultar menu
-            ui->label->hide();
+            //ui->label->hide();
 
             ui->btnJugar->hide();
 
@@ -169,6 +233,10 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent), ui(new Ui::MainWin
                 {
                 // borrar cuando este liso el nivel 1
                     nivel1->actualizar(0.016f);
+
+                }
+                if(nivel1 != nullptr &&nivel1->juegoTerminado()){
+                    mostrarGameOver();
                 }
                 // borrar cuando este liso el nivel 1
                 if(nivel2 != nullptr)
@@ -176,15 +244,59 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent), ui(new Ui::MainWin
                 // borrar cuando este liso el nivel 1
                     nivel2->actualizar(0.016f);
                 }
+                if(nivel2 != nullptr && nivel2->juegoTerminado()){
+                    mostrarGameOver();
+                }
                 /*nivel1->actualizar(0.016f);*/ //descomentar cuando el nivel 1 este listo, es solo para probar el nivel 2 sin pasar por el nivel 1
-
-                // REDIBUJAR
 
                 update();
             }
         });
 }
+void MainWindow::mostrarGameOver()
+{
+    estadoMenu = GAME_OVER;
 
+    juegoIniciado = false;
+
+    fondoActual = fondoGameOver;
+
+    update();
+
+    QTimer::singleShot(
+        3000,
+        this,
+        &MainWindow::volverMenuPrincipal);
+}
+void MainWindow::volverMenuPrincipal()
+{
+    delete nivel1;
+    nivel1 = nullptr;
+
+    delete nivel2;
+    nivel2 = nullptr;
+
+    juegoIniciado = false;
+
+    estadoMenu = MENU_PRINCIPAL;
+
+    fondoActual = fondoMenuPrincipal;
+
+    ui->btnJugar->show();
+    ui->btnSalir->show();
+    ui->btnOpciones->show();
+    ui->btnCreditos->show();
+
+    ui->btnnivel1->hide();
+    ui->btnNivel2->hide();
+    ui->btndificultad->hide();
+
+    ui->btnFacil->hide();
+    ui->btnNormal->hide();
+    ui->btnDificil->hide();
+
+    update();
+}
 MainWindow::~MainWindow()
 {
     delete nivel1;
