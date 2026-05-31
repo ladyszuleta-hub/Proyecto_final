@@ -14,7 +14,7 @@ Nivel2::Nivel2()
     camaraX = 0;
 
     fondoNivel.load(
-        ":/img/Recursos/fondo_n22.png");
+        ":/img/Recursos/fondo_n2.png");
 
     crearNivel();
 }
@@ -44,18 +44,18 @@ Nivel2::~Nivel2()
     {
         delete pr;
     }
+
+    if(jugador->getPosicion().getY() > 900)
+    {
+        jugador->recibirDanio(1);
+
+        jugador->setPosicion(100,500);
+    }
 }
 
-// ======================================================
-// CREAR NIVEL
-// ======================================================
 
 void Nivel2::crearNivel()
 {
-    // ==================================================
-    // JUGADOR
-    // ==================================================
-
     jugador = new SnowMan(
         100,
         500,
@@ -75,27 +75,16 @@ void Nivel2::crearNivel()
     jugador->setLimites(
         QRectF(0,0,5000,768));
 
-    // ==================================================
-    // ENEMIGO
-    // ==================================================
 
     FireEnemy* enemigo1 =
-        new FireEnemy(
-            2500,
-            240,
-            48,
-            48,
+        new FireEnemy(40,400,48,48,
 
-            new FrictionPhysics(0.03f),
-            nullptr);
+            new FrictionPhysics(0.03f));
 
     enemigo1->setTarget(jugador);
 
     enemigos.push_back(enemigo1);
 
-    // ==================================================
-    // SUELO PRINCIPAL
-    // ==================================================
 
     plataformas.push_back(
         new obstaculo(
@@ -105,9 +94,7 @@ void Nivel2::crearNivel()
             50,
             "suelo"));
 
-    // ==================================================
-    // PLATAFORMAS
-    // ==================================================
+
 
     plataformas.push_back(
         new obstaculo(
@@ -225,21 +212,13 @@ void Nivel2::actualizar(float dt)
 
     actualizarPortal();
 
-    // ======================================
     // CAER AL VACIO
-    // ======================================
 
     if(jugador->getPosicion().getY() > 900)
     {
         jugador->recibirDanio(1);
 
-        // volver al inicio
-
         jugador->setPosicion(100,500);
-
-        Vector2D vel(0,0);
-
-        jugador->setVelocity(vel);
     }
 
     // GANAR
@@ -357,17 +336,17 @@ void Nivel2::renderizar(QPainter *painter)
         camaraX = 0;
 
     // limite final del mapa
-    if(camaraX > 2500)
-        camaraX = 2500;
+    if(camaraX > 3000)
+        camaraX = 3000;
 
-    // =========================================
     // FONDO
-    // =========================================
-
-    painter->drawPixmap(
-        QRect(0,0,1366,768),
-        fondoNivel,
-        QRect(camaraX,0,1366,768));
+    for(int x = 0; x < 5000; x += fondoNivel.width())
+    {
+        painter->drawPixmap(
+            x - camaraX,
+            0,
+            fondoNivel);
+    }
 
     // =========================================
     // PLATAFORMAS
@@ -422,7 +401,28 @@ void Nivel2::renderizar(QPainter *painter)
     portal->renderizar(painter);
 
     painter->restore();
+
+
+    painter->setPen(Qt::white);
+
+    painter->setFont(
+        QFont("Arial",20,QFont::Bold));
+
+    painter->drawText(
+        20,
+        40,
+        "Vidas: " +
+            QString::number(
+                jugador->getVidas()));
+
+    painter->drawText(
+        20,
+        80,
+        "Puntos: " +
+            QString::number(
+                jugador->getPuntaje()));
 }
+
 void Nivel2::manejarTeclaPresionada(
     QKeyEvent* event)
 {

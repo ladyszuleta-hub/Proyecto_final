@@ -313,6 +313,15 @@ void MainWindow::paintEvent(QPaintEvent *event)
 
     QPainter painter(this);
 
+    if(estadoMenu == GAME_OVER)
+    {
+        painter.drawPixmap(
+            rect(),
+            fondoGameOver);
+
+        return;
+    }
+
     // DIBUJAR FONDO
 
     if(nivel2 == nullptr)

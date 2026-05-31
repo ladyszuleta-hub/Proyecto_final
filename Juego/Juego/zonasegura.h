@@ -8,6 +8,8 @@ private:
     int puntosNecesarios;
 
     bool desbloqueada;
+
+    QPixmap spritePortal;
 public:
     ZonaSegura(float x,float y,float ancho,float alto,int puntosNecesarios);
     virtual ~ZonaSegura();

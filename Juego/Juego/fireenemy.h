@@ -2,11 +2,20 @@
 #define FIREENEMY_H
 
 #include "entidad.h"
-#include "estrategia.h"
 #include <QPainter>
 
-    // Forward declaration
-    class FireAgent;
+struct Percepcion
+{
+    bool jugadorVisible;
+
+    float distanciaJugador;
+
+    int vidasJugador;
+
+    bool jugadorDebil;
+};
+
+
 class SnowMan;
 
 // ESTADOS
@@ -27,12 +36,21 @@ enum class TipoAccion
     BLOQUEAR_CAMINO,
     PATRULLAR
 };
+struct Proyectil
+{
+    float x;
+    float y;
 
+    float vx;
+    float vy;
+
+    bool activo;
+};
 class FireEnemy : public entidad
 {
 public:
 
-    FireEnemy(float x,float y,float ancho,float alto,fisicas* physics, FireAgent* agent = nullptr);
+    FireEnemy(float x,float y,float ancho,float alto,fisicas* physics);
 
     ~FireEnemy() override;
 
@@ -59,11 +77,8 @@ public:
 
     void setRadioDerretimiento(float r);
 
-    void setAgent(FireAgent* agent);
-
 private:
 
-    FireAgent* agent;
 
     SnowMan* target;
 
@@ -74,7 +89,13 @@ private:
     float animTimer;
 
     void simpleSeek(float dt);
-    Estrategia* estrategiaActual;
+    Percepcion percibir();
+    TipoAccion decidirAccion(const Percepcion& p);
+    int ataquesExitosos;
+    QPixmap spriteProyectil;
+    bool proyectilActivo;
+    Proyectil proyectil;
+    int vecesQuePerdioAlJugador;
 };
 
 #endif // FIREENEMY_H

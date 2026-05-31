@@ -5,14 +5,11 @@
 #include <QPen>
 
 
-FireEnemy::FireEnemy(float x,float y,float ancho,float alto,fisicas* physics,FireAgent* agent)
-
-    : entidad(x,y,ancho,alto,physics)
+FireEnemy::FireEnemy(float x,float y,float ancho,float alto,fisicas* physics): entidad(x,y,ancho,alto,physics)
 {
-    estrategiaActual = new EstrategiaPersecucion();
-    this->agent = agent;
-
     target = nullptr;
+
+    spriteProyectil.load(":/img/Recursos/proyectil_de_fuego.png");
 
     estado = EstadoFireEnemy::PATRULLANDO;
 
@@ -20,22 +17,22 @@ FireEnemy::FireEnemy(float x,float y,float ancho,float alto,fisicas* physics,Fir
 
     animTimer = 0.0f;
 
-    speed = 120.0f;
+    speed = 180.0f;
 
     health = 1;
-}
 
-// ======================================================
-// DESTRUCTOR
-// ======================================================
+    ataquesExitosos = 0;
+
+    vecesQuePerdioAlJugador = 0;
+
+    proyectilActivo = false;
+    proyectil.activo = false;
+}
 
 FireEnemy::~FireEnemy(){
-    delete estrategiaActual;
+
 }
 
-// ======================================================
-// UPDATE
-// ======================================================
 
 void FireEnemy::updateLogic(float dt)
 {
@@ -44,48 +41,53 @@ void FireEnemy::updateLogic(float dt)
 
     animTimer += dt;
 
-    // Fase 2 IA
-    if(agent != nullptr)
+    Percepcion p = percibir();
+
+    TipoAccion accion =
+        decidirAccion(p);
+
+    ejecutarAccion(accion);
+
+    if(proyectil.activo)
     {
-        // futura IA
+        proyectil.x += proyectil.vx * dt;
+        proyectil.y += proyectil.vy * dt;
     }
-    else
+
+    if(proyectil.activo)
     {
-        // seek simple
         float dx =
-            target->getPosicion().getX()
-            - posicion.getX();
+            proyectil.x - target->getPosicion().getX();
 
         float dy =
-            target->getPosicion().getY()
-            - posicion.getY();
+            proyectil.y - target->getPosicion().getY();
 
         float distancia =
             std::sqrt(dx*dx + dy*dy);
 
-        // =============================
-        // CAMBIO DE ESTRATEGIA
-        // =============================
-
-        delete estrategiaActual;
-
-        if(distancia < 120)
+        if(distancia < 25)
         {
-            estrategiaActual =
-                new EstrategiaAtaque();
-        }
-        else
-        {
-            estrategiaActual =
-                new EstrategiaPersecucion();
-        }
+            target->recibirDanio(1);
 
-        // EJECUTAR IA
+            proyectil.activo = false;
 
-        estrategiaActual->ejecutar(
-            this,
-            target);
+            proyectilActivo = false;
+        }
     }
+    if(proyectil.activo)
+    {
+        if(proyectil.x < -100 ||
+            proyectil.x > 5000 ||
+            proyectil.y < -100 ||
+            proyectil.y > 1000)
+        {
+            proyectil.activo = false;
+
+            proyectilActivo = false;
+        }
+    }
+
+
     // DAÑO AL JUGADOR
 
     if(target->isAlive())
@@ -104,8 +106,11 @@ void FireEnemy::updateLogic(float dt)
         if(distancia < radioDerretimiento)
         {
             target->recibirDanio(1);
+
+            ataquesExitosos++;
         }
     }
+
 }
 
 // SEEK SIMPLE
@@ -164,54 +169,42 @@ void FireEnemy::renderizar(QPainter* painter,float camaraX)
     float oy = (h - alto)/2.0f;
 
     // Aura
-    painter->setBrush(
-        QColor(255,120,0,80));
+    painter->setBrush(QColor(255,120,0,80));
 
     painter->setPen(Qt::NoPen);
 
-    painter->drawEllipse(
-        QRectF(posicion.getX()-ox-8,
-               posicion.getY()-oy-8,
-               w+16,
-               h+16));
+    painter->drawEllipse(QRectF(posicion.getX()-ox-8,posicion.getY()-oy-8,w+16,h+16));
 
     // Cuerpo
-    painter->setBrush(
-        QColor(255,140,0));
+    painter->setBrush(QColor(255,140,0));
 
-    painter->drawEllipse(
-        QRectF(posicion.getX()-ox,
-               posicion.getY()-oy,
-               w,
-               h));
+    painter->drawEllipse(QRectF(posicion.getX()-ox,posicion.getY()-oy,w,h));
 
     // Núcleo
-    painter->setBrush(
-        QColor(255,230,50));
+    painter->setBrush(QColor(255,230,50));
 
-    painter->drawEllipse(
-        QRectF(posicion.getX()+w*0.2f-ox,
-               posicion.getY()+h*0.2f-oy,
-               w*0.6f,
-               h*0.6f));
+    painter->drawEllipse(QRectF(posicion.getX()+w*0.2f-ox,posicion.getY()+h*0.2f-oy,w*0.6f,h*0.6f));
 
     // Ojos
-    painter->setBrush(
-        QColor(0,180,0));
+    painter->setBrush(QColor(0,180,0));
 
-    painter->drawEllipse(
-        QRectF(posicion.getX()+6,
-               posicion.getY()+8,
-               7,
-               7));
+    painter->drawEllipse(QRectF(posicion.getX()+6,posicion.getY()+8,7,7));
 
-    painter->drawEllipse(
-        QRectF(posicion.getX()+22,
-               posicion.getY()+8,
-               7,
-               7));
+    painter->drawEllipse(QRectF(posicion.getX()+22,posicion.getY()+8,7,7));
 
     painter->restore();
+
+    if(proyectil.activo)
+    {
+        painter->drawPixmap(
+            QRectF(
+                proyectil.x - camaraX,
+                proyectil.y,
+                32,
+                32),
+            spriteProyectil,
+            spriteProyectil.rect());
+    }
 }
 
 // ACCIONES
@@ -226,16 +219,11 @@ void FireEnemy::ejecutarAccion(TipoAccion accion)
 
         if(target)
         {
-            float dx =
-                target->getPosicion().getX()
-                - posicion.getX();
+            float dx =target->getPosicion().getX()- posicion.getX();
 
-            float dy =
-                target->getPosicion().getY()
-                - posicion.getY();
+            float dy =target->getPosicion().getY()- posicion.getY();
 
-            float distancia =
-                std::sqrt(dx*dx + dy*dy);
+            float distancia =std::sqrt(dx*dx + dy*dy);
 
             dx /= distancia;
 
@@ -276,16 +264,6 @@ void FireEnemy::ejecutarAccion(TipoAccion accion)
     }
 }
 
-// PROYECTIL
-
-bool FireEnemy::lanzarProyectil()
-{
-    if(target == nullptr)
-        return false;
-
-    return true;
-}
-
 // GETTERS
 
 EstadoFireEnemy FireEnemy::getEstado() const
@@ -320,13 +298,75 @@ void FireEnemy::setTarget(SnowMan* target)
     this->target = target;
 }
 
-void FireEnemy::setAgent(FireAgent* agent)
+Percepcion FireEnemy::percibir()
 {
-    if(agent == nullptr)
+    Percepcion p;
+
+    float dx =
+        target->getPosicion().getX()
+        - posicion.getX();
+
+    float dy =
+        target->getPosicion().getY()
+        - posicion.getY();
+
+    p.distanciaJugador =
+        std::sqrt(dx*dx + dy*dy);
+
+    p.jugadorVisible =
+        p.distanciaJugador < 300;
+
+    p.vidasJugador =
+        target->getVidas();
+
+    p.jugadorDebil =
+        p.vidasJugador <= 1;
+
+    return p;
+}
+TipoAccion FireEnemy::decidirAccion(const Percepcion& p)
+{
+    if(!p.jugadorVisible)
     {
-        throw std::invalid_argument(
-            "agent null");
+        vecesQuePerdioAlJugador++;
+
+        return TipoAccion::PATRULLAR;
     }
 
-    this->agent = agent;
+    if(p.distanciaJugador < 200){
+        return TipoAccion::LANZAR_PROYECTIL;
+    }
+
+    return TipoAccion::PERSEGUIR;
+}
+bool FireEnemy::lanzarProyectil()
+{
+    if(proyectilActivo)
+        return false;
+
+    if(target == nullptr)
+        return false;
+
+    float dx =
+        target->getPosicion().getX() - posicion.getX();
+
+    float dy =
+        target->getPosicion().getY() - posicion.getY();
+
+    float distancia =
+        std::sqrt(dx*dx + dy*dy);
+
+    dx /= distancia;
+    dy /= distancia;
+
+    proyectil.x = posicion.getX() + ancho/2;
+    proyectil.y = posicion.getY() + alto/2;
+
+    proyectil.vx = dx * 300;
+    proyectil.vy = dy * 300;
+
+    proyectil.activo = true;
+    proyectilActivo = true;
+
+    return true;
 }
