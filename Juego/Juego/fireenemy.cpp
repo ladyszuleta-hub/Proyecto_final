@@ -8,6 +8,9 @@
 FireEnemy::FireEnemy(float x,float y,float ancho,float alto,fisicas* physics): entidad(x,y,ancho,alto,physics)
 {
     target = nullptr;
+    frameActual = 0;
+
+    cargarSprites();
 
     spriteProyectil.load(":/img/Recursos/proyectil_de_fuego.png");
 
@@ -19,7 +22,7 @@ FireEnemy::FireEnemy(float x,float y,float ancho,float alto,fisicas* physics): e
 
     speed = 180.0f;
 
-    health = 1;
+    vidas = 1;
 
     ataquesExitosos = 0;
 
@@ -110,7 +113,7 @@ void FireEnemy::updateLogic(float dt)
             ataquesExitosos++;
         }
     }
-
+    actualizarSprite();
 }
 
 // SEEK SIMPLE
@@ -153,57 +156,14 @@ void FireEnemy::renderizar(QPainter* painter,float camaraX)
     if(!activo)
         return;
 
-    painter->save();
 
-    // Animación
-    float pulse =
-        1.0f +
-        0.1f * std::sin(animTimer * 6.0f);
-
-    float w = ancho * pulse;
-
-    float h = alto * pulse;
-
-    float ox = (w - ancho)/2.0f;
-
-    float oy = (h - alto)/2.0f;
-
-    // Aura
-    painter->setBrush(QColor(255,120,0,80));
-
-    painter->setPen(Qt::NoPen);
-
-    painter->drawEllipse(QRectF(posicion.getX()-ox-8,posicion.getY()-oy-8,w+16,h+16));
-
-    // Cuerpo
-    painter->setBrush(QColor(255,140,0));
-
-    painter->drawEllipse(QRectF(posicion.getX()-ox,posicion.getY()-oy,w,h));
-
-    // Núcleo
-    painter->setBrush(QColor(255,230,50));
-
-    painter->drawEllipse(QRectF(posicion.getX()+w*0.2f-ox,posicion.getY()+h*0.2f-oy,w*0.6f,h*0.6f));
-
-    // Ojos
-    painter->setBrush(QColor(0,180,0));
-
-    painter->drawEllipse(QRectF(posicion.getX()+6,posicion.getY()+8,7,7));
-
-    painter->drawEllipse(QRectF(posicion.getX()+22,posicion.getY()+8,7,7));
-
-    painter->restore();
+    painter->drawPixmap(QRectF(posicion.getX() - camaraX,posicion.getY(),ancho,alto),
+        frames[frameActual],frames[frameActual].rect());
 
     if(proyectil.activo)
     {
-        painter->drawPixmap(
-            QRectF(
-                proyectil.x - camaraX,
-                proyectil.y,
-                32,
-                32),
-            spriteProyectil,
-            spriteProyectil.rect());
+        painter->drawPixmap(QRectF(proyectil.x - camaraX,
+                proyectil.y,32,32),spriteProyectil,spriteProyectil.rect());
     }
 }
 
@@ -369,4 +329,70 @@ bool FireEnemy::lanzarProyectil()
     proyectilActivo = true;
 
     return true;
+}
+void FireEnemy::actualizarSprite()
+{
+    if(target == nullptr)
+        return;
+
+    float dx =
+        target->getPosicion().getX()
+        - posicion.getX();
+
+    float dy =
+        target->getPosicion().getY()
+        - posicion.getY();
+
+    if(std::abs(dx) > std::abs(dy))
+    {
+        if(dx > 0)
+        {
+            frameActual = 3; // derecha
+        }
+        else
+        {
+            frameActual = 2; // izquierda
+        }
+    }
+    else
+    {
+        if(dy > 0)
+        {
+            frameActual = 0; // abajo
+        }
+        else
+        {
+            frameActual = 1; // arriba
+        }
+    }
+}
+void FireEnemy::cargarSprites()
+{
+    spriteSheet.load(
+        ":/img/Recursos/enemigo.png");
+
+    if(spriteSheet.isNull())
+    {
+        qDebug() << "No se pudo cargar enemigo";
+        return;
+    }
+
+    int filas = 2;
+    int columnas = 2;
+
+    int anchoFrame =
+        spriteSheet.width()/columnas;
+
+    int altoFrame =
+        spriteSheet.height()/filas;
+
+    for(int y=0;y<filas;y++)
+    {
+        for(int x=0;x<columnas;x++)
+        {
+            frames.push_back(
+                spriteSheet.copy(x*anchoFrame,y*altoFrame,anchoFrame,altoFrame)
+                );
+        }
+    }
 }

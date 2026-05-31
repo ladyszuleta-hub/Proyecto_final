@@ -11,7 +11,7 @@ private:
 
     QPixmap spritePortal;
 public:
-    ZonaSegura(float x,float y,float ancho,float alto,int puntosNecesarios);
+    ZonaSegura(float x, float y, float ancho, float alto, int puntosNecesarios, QString rutaSprite);
     virtual ~ZonaSegura();
 
     void actualizar(float deltaTime) override;

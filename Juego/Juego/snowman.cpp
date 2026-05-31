@@ -82,13 +82,6 @@ void SnowMan::updateLogic(float dt)
         }
     }
 
-
-    // Movimiento automático vertical
-    /*if(nivelActual == 1)
-    {
-        velocidad.setY(velocidadAuto);
-    }*/
-
     // Timers
     actualizarBoost(dt);
 
@@ -219,6 +212,10 @@ void SnowMan::manejarTeclaLiberada(Qt::Key key)
     case Qt::Key_S:
         moviendoAbajo=false;
         break;
+    case Qt::Key_Space:
+
+        break;
+
 
     default:
         break;
@@ -493,4 +490,12 @@ void SnowMan::setNivelActual(int nivel)
 void SnowMan::setModoPlataforma(bool estado)
 {
     modoPlataforma = estado;
+}
+void SnowMan::setVidas(int hp)
+{
+    if(hp < 0)
+        throw std::invalid_argument(
+            "hp negativa");
+
+    vidas = hp;
 }

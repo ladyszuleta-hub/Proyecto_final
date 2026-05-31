@@ -3,10 +3,11 @@
 
 Nivel1::Nivel1()
 {
-    enemigo = new FireEnemy(900,180,48,48,new FrictionPhysics(0.02f));
+    enemigo = new FireEnemy(500,500,48,48,new FrictionPhysics(0.02f));
     limitesMapa =QRectF(55,40,1265,665);
 
-    puntosMinimos = 500;
+    puntosMinimos = 820;
+    completado = false;
 
     jugador = new SnowMan(120,120,64,64,new FrictionPhysics(0.01));
 
@@ -19,29 +20,29 @@ Nivel1::Nivel1()
 
     generarVidas();
 
-    portal =new ZonaSegura(1050,560,100,100,puntosMinimos);
+    portal =new ZonaSegura(1050,560,100,100,puntosMinimos,":/img/Recursos/portalN1.png");
 }
 void Nivel1::crearObstaculos()
 {
-    obstaculos.push_back(new obstaculo(250,180,80,80,"roca"));
+    obstaculos.push_back(new obstaculo(300,180,80,80,"roca"));
 
     obstaculos.push_back(new obstaculo(700, 220, 90,90,"hielo"));
 
-    obstaculos.push_back(new obstaculo(500,500,70,70,"caja"));
+    obstaculos.push_back(new obstaculo(500,500,70,90,"caja"));
 }
 void Nivel1::generarVidas()
 {
     for(int i=0;i<2;i++)
     {
-        vidasExtra.push_back(new premio(rand()%1100,rand()%620,"vida",0));
+        vidasExtra.push_back(new premio(55+rand()%1100,40+rand()%620,"vida",0));
     }
 }
 void Nivel1::generarPremios()
 {
     for(int i=0;i<8;i++)
     {
-        premios.push_back(new premio(rand()%1100,rand()%620,"diamante",50));
-        premios.push_back(new premio(rand()%1100,rand()%620,"copo",60));
+        premios.push_back(new premio(60+rand()%1100,50+rand()%600,"diamante",50));
+        premios.push_back(new premio(60+rand()%1100,50+rand()%600,"copo",60));
     }
 }
 void Nivel1::detectarColisiones()
@@ -82,9 +83,9 @@ void Nivel1::detectarColisiones()
 
     for(auto vida : vidasExtra)
     {
-        if(jugador->colisionaCon(*vida))
+        if(vida->estaActivo() && jugador->colisionaCon(*vida))
         {
-            jugador->setHealth(jugador->getHealth()+1);
+            jugador->setVidas(jugador->getVidas()+1);
 
             vida->setActivo(false);
         }
@@ -92,6 +93,13 @@ void Nivel1::detectarColisiones()
     if(jugador->colisionaCon(*enemigo))
     {
         jugador->recibirDanio(1);
+    }
+    if(portal->estaDesbloqueada())
+    {
+        if(jugador->colisionaCon(*portal))
+        {
+            completado = true;
+        }
     }
 }
 
@@ -186,10 +194,13 @@ void Nivel1::actualizar(float dt)
     jugador->actualizar(dt);
     enemigo->actualizar(dt);
     portal->actualizarEstado(jugador->getPuntaje());
-
     detectarColisiones();
 }
 bool Nivel1::juegoTerminado() const
 {
     return jugador->getVidas() <= 0;
+}
+bool Nivel1::nivelCompletado() const
+{
+    return completado;
 }

@@ -68,8 +68,14 @@ private:
 
     int nivelSeleccionado;
     Dificultad dificultadSeleccionada;
+    bool nivel2Desbloqueado;
+    void volverMenuNiveles();
 
+    bool mostrandoVictoria;
 
+    QPixmap imagenVictoria;
+
+    QTimer* timerVictoria;
 
     float dt;
 };

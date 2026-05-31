@@ -9,7 +9,7 @@ protected:
 
     Vector2D velocidad;
 
-    int health;
+    int vidas;
 
     float speed;
 
@@ -22,9 +22,9 @@ public:
     void setfisicas(fisicas* nuevo);
 
     // VIDA
-    int getHealth() const;
+    int getVidas() const;
 
-    void setHealth(int hp);
+    void setVidas(int hp);
 
     void takeDamage(int amount);
 

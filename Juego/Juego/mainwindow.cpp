@@ -8,6 +8,7 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent), ui(new Ui::MainWin
     nivel2 = nullptr;
     ui->setupUi(this);
     nivel1 = nullptr;
+    nivel2Desbloqueado = false;
 
     // CONFIGURACION INICIAL
 
@@ -33,6 +34,14 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent), ui(new Ui::MainWin
         ":/img/Recursos/gameover.png");
 
     fondoActual = fondoMenuPrincipal;
+    mostrandoVictoria = false;
+
+    imagenVictoria = QPixmap(
+        ":/img/Recursos/ganaste.png");
+
+    timerVictoria = new QTimer(this);
+
+    timerVictoria->setSingleShot(true);
     setFixedSize(1366,768);
 
 
@@ -145,6 +154,8 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent), ui(new Ui::MainWin
             ui->btnJugar->hide();
 
             ui->btnNivel2->hide();
+            ui->btnnivel1->hide();
+            ui->btndificultad->hide();
 
             ui->btnSalir->hide();
 
@@ -216,7 +227,18 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent), ui(new Ui::MainWin
                 "Aqui iran las opciones del juego"
                 );
         });
+    connect(
+        timerVictoria,
+        &QTimer::timeout,
 
+        this,
+
+        [=]()
+        {
+            mostrandoVictoria = false;
+
+            volverMenuNiveles();
+        });
     // GAME LOOP
 
     connect(
@@ -233,6 +255,15 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent), ui(new Ui::MainWin
                 {
                 // borrar cuando este liso el nivel 1
                     nivel1->actualizar(0.016f);
+                    if(nivel1->nivelCompletado())
+                    {
+                        nivel2Desbloqueado = true;
+                        mostrandoVictoria = true;
+
+                        timer->stop();
+                        timerVictoria->start(3000);
+                        update();
+                    }
 
                 }
                 if(nivel1 != nullptr &&nivel1->juegoTerminado()){
@@ -347,6 +378,12 @@ void MainWindow::paintEvent(QPaintEvent *event)
         }
         /*nivel1->renderizar(&painter);*/ //descomentar cuando este listo el nivel 1
     }
+    if(mostrandoVictoria)
+    {
+        painter.drawPixmap(
+            rect(),
+            imagenVictoria);
+    }
 }
 
 // TECLADO
@@ -384,4 +421,29 @@ void MainWindow::keyReleaseEvent(QKeyEvent *event)
     {
         nivel1->manejarTeclaLiberada(event);
     }*/
+}
+void MainWindow::volverMenuNiveles()
+{
+    delete nivel1;
+    nivel1 = nullptr;
+
+    delete nivel2;
+    nivel2 = nullptr;
+
+    juegoIniciado = false;
+
+    estadoMenu = MENU_NIVELES;
+
+    fondoActual = fondoMenuNiveles;
+
+    ui->btnnivel1->show();
+
+    ui->btndificultad->show();
+
+    if(nivel2Desbloqueado)
+    {
+        ui->btnNivel2->show();
+    }
+
+    update();
 }
