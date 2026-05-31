@@ -10,9 +10,11 @@
         <file>Recursos/hielo.png</file>
         <file>Recursos/vida.png</file>
         <file>Recursos/roca.png</file>
-        <file>Recursos/fondo_n2.png</file>
         <file>Recursos/submenu1.png</file>
         <file>Recursos/submenudific.png</file>
         <file>Recursos/enemigo.png</file>
+        <file>Recursos/proyectil_de_fuego.png</file>
+        <file>Recursos/fondo_n2.png</file>
+        <file>Recursos/portal.png</file>
     </qresource>
 </RCC>
