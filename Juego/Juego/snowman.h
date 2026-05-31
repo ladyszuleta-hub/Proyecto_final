@@ -62,6 +62,7 @@ public:
 
 
     int getVidas() const;
+    void setVidas(int hp);
 
     int getPuntaje() const;
 

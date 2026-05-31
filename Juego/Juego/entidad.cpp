@@ -4,7 +4,7 @@ entidad::entidad(float x, float y, float ancho, float alto, fisicas *physics): O
 {
     velocidad = Vector2D(0,0);
 
-    health = 3;
+    vidas = 3;
 
     speed = 150.0f;
 
@@ -56,18 +56,18 @@ void entidad::setfisicas(fisicas* nuevo)
 }
 
 
-int entidad::getHealth() const
+int entidad::getVidas() const
 {
-    return health;
+    return vidas;
 }
 
-void entidad::setHealth(int hp)
+void entidad::setVidas(int hp)
 {
     if(hp < 0)
         throw std::invalid_argument(
             "hp negativa");
 
-    health = hp;
+    vidas = hp;
 }
 
 void entidad::takeDamage(int amount)
@@ -75,17 +75,17 @@ void entidad::takeDamage(int amount)
     if(amount < 0)
         throw std::invalid_argument(
             "damage negativo");
-    health -= amount;
-    if(health <= 0)
+    vidas -= amount;
+    if(vidas <= 0)
     {
-        health = 0;
+        vidas = 0;
         activo = false;
     }
 }
 
 bool entidad::isAlive() const
 {
-    return activo && health > 0;
+    return activo && vidas > 0;
 }
 
 

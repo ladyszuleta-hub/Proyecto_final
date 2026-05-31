@@ -153,7 +153,7 @@ void Nivel2::crearNivel()
         140,
         100,
         120,
-        0);
+        0,":/img/Recursos/portalN2.png");
 }
     // ==================================================
     // PREMIOS

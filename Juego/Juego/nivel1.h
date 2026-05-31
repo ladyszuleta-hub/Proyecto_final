@@ -29,6 +29,7 @@ private:
     int puntosMinimos;
 
     QRectF limitesMapa;
+    bool completado;
 
 public:
 
@@ -44,6 +45,7 @@ public:
 
     void manejarTeclaLiberada(QKeyEvent* event);
     bool juegoTerminado() const;
+    bool nivelCompletado() const;
 
 private:
 
@@ -55,6 +57,6 @@ private:
 
     void detectarColisiones();
 
-    bool nivelCompletado() const;
+
 };
 #endif // NIVEL1_H

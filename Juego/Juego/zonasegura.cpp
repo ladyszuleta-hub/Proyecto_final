@@ -2,12 +2,12 @@
 #include <QPixmap>
 
 // Constructor
-ZonaSegura::ZonaSegura(float x,float y,float ancho,float alto,int puntosNecesarios): ObjetoJuego(x, y, ancho, alto){
+ZonaSegura::ZonaSegura(float x,float y,float ancho,float alto,int puntosNecesarios,QString rutaSprite): ObjetoJuego(x, y, ancho, alto){
     this->puntosNecesarios = puntosNecesarios;
 
     desbloqueada = false;
 
-    spritePortal.load(":/img/Recursos/portal.png");
+    spritePortal.load(rutaSprite);
 }
 
 ZonaSegura::~ZonaSegura(){}
@@ -16,7 +16,19 @@ void ZonaSegura::actualizar(float deltaTime){
     (void)deltaTime;
 }
 
-void ZonaSegura::renderizar(QPainter* painter){}
+void ZonaSegura::renderizar(QPainter* painter){
+        if(!desbloqueada)
+            return;
+
+        painter->drawPixmap(
+            QRectF(
+                posicion.getX(),
+                posicion.getY(),
+                ancho,
+                alto),
+            spritePortal,
+            spritePortal.rect());
+}
 
 // Actualiza si el portal ya puede abrirse
 void ZonaSegura::actualizarEstado(int puntosJugador){

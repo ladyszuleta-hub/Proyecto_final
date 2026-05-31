@@ -3,6 +3,8 @@
 
 #include "entidad.h"
 #include <QPainter>
+#include <QPixmap>
+#include <vector>
 
 struct Percepcion
 {
@@ -96,6 +98,15 @@ private:
     bool proyectilActivo;
     Proyectil proyectil;
     int vecesQuePerdioAlJugador;
+    QPixmap spriteSheet;
+
+    std::vector<QPixmap> frames;
+
+    int frameActual;
+
+    void cargarSprites();
+
+    void actualizarSprite();
 };
 
 #endif // FIREENEMY_H
