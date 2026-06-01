@@ -18,5 +18,13 @@
         <file>Recursos/portalN1.png</file>
         <file>Recursos/portalN2.png</file>
         <file>Recursos/ganaste.png</file>
+        <file>Recursos/musica.png</file>
+    </qresource>
+    <qresource prefix="/sonidos"/>
+    <qresource prefix="/">
+        <file>Recursos/menuprincipal.wav</file>
+        <file>Recursos/nivel1.wav</file>
+        <file>Recursos/zonasegura.wav</file>
+        <file>Recursos/premio.wav</file>
     </qresource>
 </RCC>

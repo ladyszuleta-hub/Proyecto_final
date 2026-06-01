@@ -27,19 +27,6 @@
      <string/>
     </property>
    </widget>
-   <widget class="QPushButton" name="btnOpciones">
-    <property name="geometry">
-     <rect>
-      <x>570</x>
-      <y>440</y>
-      <width>241</width>
-      <height>41</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>OPCIONES</string>
-    </property>
-   </widget>
    <widget class="QPushButton" name="btnCreditos">
     <property name="geometry">
      <rect>
@@ -50,16 +37,16 @@
      </rect>
     </property>
     <property name="text">
-     <string>CREDITOS</string>
+     <string/>
     </property>
    </widget>
    <widget class="QPushButton" name="btnSalir">
     <property name="geometry">
      <rect>
       <x>560</x>
-      <y>590</y>
+      <y>580</y>
       <width>251</width>
-      <height>41</height>
+      <height>51</height>
      </rect>
     </property>
     <property name="text">
@@ -69,14 +56,14 @@
    <widget class="QPushButton" name="btnNivel2">
     <property name="geometry">
      <rect>
-      <x>570</x>
-      <y>440</y>
-      <width>241</width>
-      <height>41</height>
+      <x>530</x>
+      <y>450</y>
+      <width>291</width>
+      <height>71</height>
      </rect>
     </property>
     <property name="text">
-     <string>NIVEL2</string>
+     <string/>
     </property>
    </widget>
    <widget class="QPushButton" name="btnnivel1">
@@ -85,7 +72,7 @@
       <x>560</x>
       <y>358</y>
       <width>251</width>
-      <height>41</height>
+      <height>61</height>
      </rect>
     </property>
     <property name="text">
@@ -96,7 +83,7 @@
     <property name="geometry">
      <rect>
       <x>560</x>
-      <y>508</y>
+      <y>440</y>
       <width>251</width>
       <height>41</height>
      </rect>
@@ -138,6 +125,32 @@
       <y>558</y>
       <width>311</width>
       <height>51</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="btnsalirju">
+    <property name="geometry">
+     <rect>
+      <x>560</x>
+      <y>548</y>
+      <width>251</width>
+      <height>71</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="btnMusica">
+    <property name="geometry">
+     <rect>
+      <x>1280</x>
+      <y>0</y>
+      <width>71</width>
+      <height>61</height>
      </rect>
     </property>
     <property name="text">

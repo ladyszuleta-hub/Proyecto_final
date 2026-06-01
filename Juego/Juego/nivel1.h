@@ -5,7 +5,7 @@
 #include <QPainter>
 #include <QKeyEvent>
 #include "fireenemy.h"
-
+#include <QSoundEffect>
 #include "snowman.h"
 #include "obstaculo.h"
 #include "premio.h"
@@ -56,6 +56,7 @@ private:
     void generarVidas();
 
     void detectarColisiones();
+    QSoundEffect sonidoportal;
 
 
 };

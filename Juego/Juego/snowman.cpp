@@ -50,6 +50,11 @@ SnowMan::SnowMan(float x, float y,float ancho,float alto,fisicas* physics,int vi
 
     cargarFrames();
     modoPlataforma = false;
+    //sonido
+    sonidopremio.setSource(
+        QUrl("qrc:/Recursos/premio.wav"));
+
+    sonidopremio.setVolume(1);
 }
 
 
@@ -268,6 +273,7 @@ void SnowMan::recogerCopo()
     velocidadNormal = speed;
 
     speed *= 1.8f;
+    sonidopremio.play();
 }
 
 
@@ -280,6 +286,7 @@ void SnowMan::recogerDiamante(int puntos)
     }
 
     puntaje += puntos;
+    sonidopremio.play();
 }
 
 void SnowMan::recibirDanio(int cantidad)
