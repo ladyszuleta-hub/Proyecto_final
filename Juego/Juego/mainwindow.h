@@ -5,6 +5,8 @@
 #include <QTimer>
 #include <QPainter>
 #include <QKeyEvent>
+#include <QMediaPlayer>
+#include <QAudioOutput>
 #include "nivel1.h"
 #include "fireenemy.h"
 #include "snowman.h"
@@ -78,6 +80,9 @@ private:
     QTimer* timerVictoria;
 
     float dt;
+    QMediaPlayer* musica;
+
+    QAudioOutput* audio;
 };
 
 #endif // MAINWINDOW_H

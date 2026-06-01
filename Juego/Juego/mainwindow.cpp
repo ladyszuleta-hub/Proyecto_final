@@ -17,7 +17,7 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent), ui(new Ui::MainWin
 
     ui->btnnivel1->hide();
     ui->btnNivel2->hide();
-    ui->btndificultad->hide();
+    ui->btnsalirju->hide();
     ui->btnFacil->hide();
     ui->btnNormal->hide();
     ui->btnDificil->hide();
@@ -43,14 +43,46 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent), ui(new Ui::MainWin
 
     timerVictoria->setSingleShot(true);
     setFixedSize(1366,768);
+    //audio
+    audio = new QAudioOutput(this);
+    musica = new QMediaPlayer(this);
+    musica->setAudioOutput(audio);
+    audio->setVolume(0.4);
+    musica->setSource(
+        QUrl("qrc:/Recursos/menuprincipal.wav"));
+
+    musica->play();
+    ui->btnMusica->setIcon(
+        QIcon(":/img/Recursos/musica.png"));
+
+    ui->btnMusica->setIconSize(
+        QSize(80,80));
 
 
     // TIMER
 
     timer = new QTimer(this);
 
-    // BOTON JUGAR
+    //musica
+    connect(
+        ui->btnMusica,
+        &QPushButton::clicked,
 
+        this,
+
+        [=]()
+    {
+            if(musica->playbackState() == QMediaPlayer::PlayingState)
+            {
+                musica->stop();
+            }
+            else
+            {
+                musica->play();
+            }
+        });
+
+    // BOTON JUGAR
     connect(
         ui->btnJugar,
         &QPushButton::clicked,
@@ -66,14 +98,26 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent), ui(new Ui::MainWin
             ui->btnJugar->hide();
             ui->btnSalir->hide();
             ui->btnCreditos->hide();
-            ui->btnOpciones->hide();
 
 
             ui->btnnivel1->show();
             ui->btnNivel2->show();
-            ui->btndificultad->show();
+            ui->btnsalirju->show();
+
             update();
         });
+    connect(
+        ui->btnsalirju,
+        &QPushButton::clicked,
+
+        this,
+
+        [=]()
+        {
+            volverMenuPrincipal();
+            update();
+        });
+
 
     connect(
         ui->btndificultad,
@@ -89,7 +133,8 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent), ui(new Ui::MainWin
             ui->btnJugar->hide();
             ui->btnSalir->hide();
             ui->btnCreditos->hide();
-            ui->btnOpciones->hide();
+            ui->btnsalirju->hide();
+            //
 
             ui->btnnivel1->hide();
             ui->btnNivel2->hide();
@@ -109,6 +154,12 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent), ui(new Ui::MainWin
 
         [=]()
         {
+            musica->stop();
+
+            musica->setSource(
+                QUrl("qrc:/Recursos/nivel1.wav"));
+
+            musica->play();
             juegoIniciado = true;
 
             estadoMenu = JUGANDO;
@@ -118,7 +169,7 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent), ui(new Ui::MainWin
             ui->btnnivel1->hide();
             ui->btnNivel2->hide();
             ui->btndificultad->hide();
-
+            ui->btnsalirju->hide();
             ui->btnFacil->hide();
             ui->btnNormal->hide();
             ui->btnDificil->hide();
@@ -146,6 +197,7 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent), ui(new Ui::MainWin
 
         [=]()
         {
+            musica->stop();
             juegoIniciado = true;
 
             // ocultar menu
@@ -159,7 +211,7 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent), ui(new Ui::MainWin
 
             ui->btnSalir->hide();
 
-            ui->btnOpciones->hide();
+            ui->btnsalirju->hide();
 
             ui->btnCreditos->hide();
 
@@ -203,30 +255,12 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent), ui(new Ui::MainWin
 
                 "Creditos",
 
-                "Juego creado por Davie\n\n"
+                "Juego creado por Davielys y Ladys \n\n"
                 "Proyecto en Qt Creator"
+                "Imagenes generadas con IA"
                 );
         });
 
-    // BOTON OPCIONES
-
-    connect(
-        ui->btnOpciones,
-        &QPushButton::clicked,
-
-        this,
-
-        [=]()
-        {
-            QMessageBox::information(
-
-                this,
-
-                "Opciones",
-
-                "Aqui iran las opciones del juego"
-                );
-        });
     connect(
         timerVictoria,
         &QTimer::timeout,
@@ -238,6 +272,19 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent), ui(new Ui::MainWin
             mostrandoVictoria = false;
 
             volverMenuNiveles();
+        });
+    connect(
+        musica,
+        &QMediaPlayer::mediaStatusChanged,
+        this,
+        [=](QMediaPlayer::MediaStatus status)
+        {
+            if(status ==
+                QMediaPlayer::EndOfMedia)
+            {
+                musica->setPosition(0);
+                musica->play();
+            }
         });
     // GAME LOOP
 
@@ -312,16 +359,21 @@ void MainWindow::volverMenuPrincipal()
     estadoMenu = MENU_PRINCIPAL;
 
     fondoActual = fondoMenuPrincipal;
+    musica->stop();
+
+    musica->setSource(
+        QUrl("qrc:/Recursos/menuprincipal.mp3"));
+
+    musica->play();
 
     ui->btnJugar->show();
     ui->btnSalir->show();
-    ui->btnOpciones->show();
+    ui->btndificultad->show();
     ui->btnCreditos->show();
 
     ui->btnnivel1->hide();
     ui->btnNivel2->hide();
-    ui->btndificultad->hide();
-
+    ui->btnsalirju->hide();
     ui->btnFacil->hide();
     ui->btnNormal->hide();
     ui->btnDificil->hide();
@@ -438,7 +490,8 @@ void MainWindow::volverMenuNiveles()
 
     ui->btnnivel1->show();
 
-    ui->btndificultad->show();
+    ui->btnsalirju->show();
+
 
     if(nivel2Desbloqueado)
     {

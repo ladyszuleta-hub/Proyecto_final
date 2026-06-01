@@ -21,6 +21,10 @@ Nivel1::Nivel1()
     generarVidas();
 
     portal =new ZonaSegura(1050,560,100,100,puntosMinimos,":/img/Recursos/portalN1.png");
+    sonidoportal.setSource(
+        QUrl("qrc:/Recursos/zonasegura.wav"));
+
+    sonidoportal.setVolume(1);
 }
 void Nivel1::crearObstaculos()
 {
@@ -28,7 +32,7 @@ void Nivel1::crearObstaculos()
 
     obstaculos.push_back(new obstaculo(700, 220, 90,90,"hielo"));
 
-    obstaculos.push_back(new obstaculo(500,500,70,90,"caja"));
+    obstaculos.push_back(new obstaculo(500,500,70,70,"caja"));
 }
 void Nivel1::generarVidas()
 {
@@ -98,6 +102,7 @@ void Nivel1::detectarColisiones()
     {
         if(jugador->colisionaCon(*portal))
         {
+            sonidoportal.play();
             completado = true;
         }
     }

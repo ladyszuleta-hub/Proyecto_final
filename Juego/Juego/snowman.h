@@ -2,7 +2,7 @@
 #define SNOWMAN_H
 
 #include "entidad.h"
-
+#include <QSoundEffect>
 #include <QKeyEvent>
 #include <QPainter>
 #include <QRectF>
@@ -141,6 +141,8 @@ private:
     bool chocando;
 
     int nivelActual;
+    //sonido
+    QSoundEffect sonidopremio;
 
 };
 
