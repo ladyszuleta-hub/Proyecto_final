@@ -35,7 +35,18 @@ FireEnemy::FireEnemy(float x,float y,float ancho,float alto,fisicas* physics): e
 FireEnemy::~FireEnemy(){
 
 }
+void FireEnemy::setVelocidad(float v)
+{
+    if(v > 0)
+    {
+        speed = v;
+    }
+}
 
+float FireEnemy::getVelocidad() const
+{
+    return speed;
+}
 
 void FireEnemy::updateLogic(float dt)
 {
