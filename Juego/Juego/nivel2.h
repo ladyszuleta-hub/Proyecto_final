@@ -57,6 +57,7 @@ private:
     void verificarColisiones();
 
     void actualizarPortal();
+
 };
 
 #endif // NIVEL2_H
