@@ -22,9 +22,9 @@
     </qresource>
     <qresource prefix="/sonidos"/>
     <qresource prefix="/">
-        <file>Recursos/menuprincipal.wav</file>
-        <file>Recursos/nivel1.wav</file>
-        <file>Recursos/zonasegura.wav</file>
-        <file>Recursos/premio.wav</file>
+        <file>Recursos/nivel1.mp3</file>
+        <file>Recursos/menuprincipal.mp3</file>
+        <file>Recursos/zonasegura.mp3</file>
+        <file>Recursos/premio.mp3</file>
     </qresource>
 </RCC>

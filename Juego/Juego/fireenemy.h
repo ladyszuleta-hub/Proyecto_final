@@ -78,6 +78,11 @@ public:
     float getRadioDerretimiento() const;
 
     void setRadioDerretimiento(float r);
+    // VELOCIDAD
+    void setVelocidad(float v);
+
+    float getVelocidad() const;
+
 
 private:
 

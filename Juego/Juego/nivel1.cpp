@@ -22,7 +22,7 @@ Nivel1::Nivel1()
 
     portal =new ZonaSegura(1050,560,100,100,puntosMinimos,":/img/Recursos/portalN1.png");
     sonidoportal.setSource(
-        QUrl("qrc:/Recursos/zonasegura.wav"));
+        QUrl("qrc:/Recursos/zonasegura.mp3"));
 
     sonidoportal.setVolume(1);
 }
@@ -53,17 +53,24 @@ void Nivel1::detectarColisiones()
 {
     for(auto obstaculo : obstaculos)
     {
-        if(jugador->colisionaCon(*obstaculo))
+        QRectF jugadorRect(
+            jugador->getPosicion().getX(),
+            jugador->getPosicion().getY(),
+            64,
+            64
+            );
+
+        if(jugadorRect.intersects(
+                obstaculo->getHitbox()))
         {
             Vector2D vel = jugador->getVelocity();
 
             vel.setX(-vel.getX());
-
             vel.setY(-vel.getY());
 
             jugador->setVelocity(vel);
 
-            jugador->setChocando(true);
+            jugador->recibirDanio(0);
         }
     }
 
@@ -196,6 +203,7 @@ Nivel1::~Nivel1()
 }
 void Nivel1::actualizar(float dt)
 {
+    //jugador->setChocando(false);
     jugador->actualizar(dt);
     enemigo->actualizar(dt);
     portal->actualizarEstado(jugador->getPuntaje());
@@ -208,4 +216,11 @@ bool Nivel1::juegoTerminado() const
 bool Nivel1::nivelCompletado() const
 {
     return completado;
+}
+void Nivel1::setVelocidadEnemigo(float v)
+{
+    if(enemigo)
+    {
+        enemigo->setVelocidad(v);
+    }
 }

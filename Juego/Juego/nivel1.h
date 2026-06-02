@@ -31,6 +31,7 @@ private:
     QRectF limitesMapa;
     bool completado;
 
+
 public:
 
     Nivel1();
@@ -46,6 +47,7 @@ public:
     void manejarTeclaLiberada(QKeyEvent* event);
     bool juegoTerminado() const;
     bool nivelCompletado() const;
+    void setVelocidadEnemigo(float v);
 
 private:
 

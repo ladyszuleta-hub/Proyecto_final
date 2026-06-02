@@ -43,8 +43,9 @@ SnowMan::SnowMan(float x, float y,float ancho,float alto,fisicas* physics,int vi
     frameActual = 0;
 
     animTimer = 0;
+    tiempoGolpeado = 0.0f;
 
-    chocando = false;
+    //chocando = false;
 
     nivelActual = 1;
 
@@ -52,7 +53,7 @@ SnowMan::SnowMan(float x, float y,float ancho,float alto,fisicas* physics,int vi
     modoPlataforma = false;
     //sonido
     sonidopremio.setSource(
-        QUrl("qrc:/Recursos/premio.wav"));
+        QUrl("qrc:/Recursos/premio.mp3"));
 
     sonidopremio.setVolume(1);
 }
@@ -88,12 +89,17 @@ void SnowMan::updateLogic(float dt)
     }
 
     // Timers
+    if(tiempoGolpeado > 0)
+    {
+        tiempoGolpeado -= dt;
+    }
+    else if(estado == EstadoSnowMan::GOLPEADO)
+    {
+        estado = EstadoSnowMan::IDLE;
+    }
     actualizarBoost(dt);
 
     actualizarHit(dt);
-
-    actualizarSprite(dt);
-
     // Limitar mapa
     if(tieneLimites)
         limitarDentroMapa();
@@ -122,6 +128,8 @@ void SnowMan::updateLogic(float dt)
             estado = EstadoSnowMan::IDLE;
         }
     }
+
+    actualizarSprite(dt);
 }
 
 void SnowMan::renderizar(QPainter* painter,float camaraX)
@@ -300,7 +308,7 @@ void SnowMan::recibirDanio(int cantidad)
 
     invulnerable = true;
 
-    hitTimer = 2.0f;
+    hitTimer = 1.5f;
 
     if(vidas <= 0)
     {
@@ -310,6 +318,7 @@ void SnowMan::recibirDanio(int cantidad)
 
         activo = false;
     }
+    tiempoGolpeado = 0.2f;
 }
 
 int SnowMan::getVidas() const
@@ -436,11 +445,6 @@ void SnowMan::cargarFrames()
 void SnowMan::actualizarSprite(float dt)
 {
     (void)dt;
-    if(chocando)
-    {
-        frameActual = 13;
-        return;
-    }
     switch(estado)
     {
     case EstadoSnowMan::IDLE:
@@ -476,7 +480,7 @@ void SnowMan::actualizarSprite(float dt)
         break;
     }
 }
-void SnowMan::setChocando(bool estado)
+/*void SnowMan::setChocando(bool estado)
 {
     chocando = estado;
 
@@ -485,7 +489,7 @@ void SnowMan::setChocando(bool estado)
         this->estado =
             EstadoSnowMan::GOLPEADO;
     }
-}
+}*/
 void SnowMan::setVelocidadAuto(float v)
 {
     velocidadAuto = v;

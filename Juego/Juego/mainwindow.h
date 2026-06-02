@@ -83,6 +83,7 @@ private:
     QMediaPlayer* musica;
 
     QAudioOutput* audio;
+    short int velocidadEnemigo;
 };
 
 #endif // MAINWINDOW_H

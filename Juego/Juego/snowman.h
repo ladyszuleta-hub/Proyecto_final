@@ -137,8 +137,9 @@ private:
     int frameActual;
 
     float animTimer;
+    float tiempoGolpeado;
 
-    bool chocando;
+   // bool chocando;
 
     int nivelActual;
     //sonido

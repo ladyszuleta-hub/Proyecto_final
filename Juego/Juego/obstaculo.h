@@ -17,6 +17,7 @@ public:
     void actualizar(float deltaTime ) override;
     void renderizar(QPainter* painter) override;
     string getTipo() const;
+    QRectF getHitbox() const;
 };
 
 #endif // OBSTACULO_H

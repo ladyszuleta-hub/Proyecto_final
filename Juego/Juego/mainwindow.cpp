@@ -13,6 +13,7 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent), ui(new Ui::MainWin
     // CONFIGURACION INICIAL
 
     juegoIniciado = false;
+    velocidadEnemigo = 180;
     estadoMenu = MENU_PRINCIPAL;
 
     ui->btnnivel1->hide();
@@ -49,7 +50,7 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent), ui(new Ui::MainWin
     musica->setAudioOutput(audio);
     audio->setVolume(0.4);
     musica->setSource(
-        QUrl("qrc:/Recursos/menuprincipal.wav"));
+        QUrl("qrc:/Recursos/menuprincipal.mp3"));
 
     musica->play();
     ui->btnMusica->setIcon(
@@ -157,9 +158,10 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent), ui(new Ui::MainWin
             musica->stop();
 
             musica->setSource(
-                QUrl("qrc:/Recursos/nivel1.wav"));
+                QUrl("qrc:/Recursos/nivel1.mp3"));
 
             musica->play();
+
             juegoIniciado = true;
 
             estadoMenu = JUGANDO;
@@ -173,11 +175,13 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent), ui(new Ui::MainWin
             ui->btnFacil->hide();
             ui->btnNormal->hide();
             ui->btnDificil->hide();
+            setFocus();
 
             // crear nivel 1
             if(nivel1 == nullptr)
             {
                 nivel1 = new Nivel1();
+                nivel1->setVelocidadEnemigo(velocidadEnemigo);
             }
             // fondo del nivel
 
@@ -185,6 +189,7 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent), ui(new Ui::MainWin
                 ":/img/Recursos/fondo_n1.png");
 
             timer->start(16);
+
 
             update();
         });
@@ -342,6 +347,30 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent), ui(new Ui::MainWin
                 update();
             }
         });
+    connect(ui->btnFacil,
+            &QPushButton::clicked,
+            this,
+            [=]()
+            {
+                velocidadEnemigo=100;
+                volverMenuPrincipal();
+            });
+    connect(ui->btnNormal,
+            &QPushButton::clicked,
+            this,
+            [=]()
+            {
+                velocidadEnemigo=180;
+                volverMenuPrincipal();
+            });
+    connect(ui->btnDificil,
+            &QPushButton::clicked,
+            this,
+            [=]()
+            {
+                velocidadEnemigo=360;
+                volverMenuPrincipal();
+            });
 }
 void MainWindow::mostrarGameOver()
 {

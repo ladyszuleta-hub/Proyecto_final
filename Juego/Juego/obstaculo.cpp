@@ -28,3 +28,32 @@ void obstaculo::renderizar(QPainter* painter){
 string obstaculo::getTipo() const{
     return tipo;
 }
+QRectF obstaculo::getHitbox() const
+{
+    if(tipo == "roca")
+    {
+        return QRectF(
+            posicion.getX() + 10,
+            posicion.getY() + 10,
+            60,
+            60
+            );
+    }
+
+    if(tipo == "hielo")
+    {
+        return QRectF(
+            posicion.getX() + 15,
+            posicion.getY() + 15,
+            50,
+            50
+            );
+    }
+
+    return QRectF(
+        posicion.getX() + 10,
+        posicion.getY() + 10,
+        50,
+        50
+        );
+}
