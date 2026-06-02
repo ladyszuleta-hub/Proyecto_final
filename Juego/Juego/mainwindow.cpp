@@ -198,6 +198,10 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent), ui(new Ui::MainWin
         [=]()
         {
             musica->stop();
+            musica->setSource(
+                QUrl("qrc:/Recursos/nivel2.mp3"));
+
+            musica->play();
             juegoIniciado = true;
 
             // ocultar menu
@@ -316,16 +320,24 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent), ui(new Ui::MainWin
                 if(nivel1 != nullptr &&nivel1->juegoTerminado()){
                     mostrarGameOver();
                 }
-                // borrar cuando este liso el nivel 1
                 if(nivel2 != nullptr)
                 {
-                // borrar cuando este liso el nivel 1
                     nivel2->actualizar(0.016f);
+
+                    if(nivel2->nivelCompletado())
+                    {
+                        mostrandoVictoria = true;
+
+                        timer->stop();
+
+                        timerVictoria->start(3000);
+
+                        update();
+                    }
                 }
                 if(nivel2 != nullptr && nivel2->juegoTerminado()){
                     mostrarGameOver();
                 }
-                /*nivel1->actualizar(0.016f);*/ //descomentar cuando el nivel 1 este listo, es solo para probar el nivel 2 sin pasar por el nivel 1
 
                 update();
             }

@@ -3,10 +3,6 @@
 #include <QBrush>
 #include <QPen>
 #include <QMessageBox>
-// ======================================================
-// CONSTRUCTOR
-// ======================================================
-
 Nivel2::Nivel2()
 {
     completado = false;
@@ -19,9 +15,6 @@ Nivel2::Nivel2()
     crearNivel();
 }
 
-// ======================================================
-// DESTRUCTOR
-// ======================================================
 
 Nivel2::~Nivel2()
 {
@@ -45,12 +38,6 @@ Nivel2::~Nivel2()
         delete pr;
     }
 
-    if(jugador->getPosicion().getY() > 900)
-    {
-        jugador->recibirDanio(1);
-
-        jugador->setPosicion(100,500);
-    }
 }
 
 
@@ -64,7 +51,7 @@ void Nivel2::crearNivel()
 
         new GravityPhysics(
             980,
-            600),
+            5000),
 
         3);
 
@@ -73,7 +60,7 @@ void Nivel2::crearNivel()
     jugador->setNivelActual(2);
 
     jugador->setLimites(
-        QRectF(0,0,5000,768));
+        QRectF(0,0,8000,2000));
 
 
     FireEnemy* enemigo1 =
@@ -144,47 +131,53 @@ void Nivel2::crearNivel()
             40,
             "plataforma"));
 
-    // ==================================================
-    // PORTAL FINAL
-    // ==================================================
+    plataformas.push_back(
+        new obstaculo(
+            5000,
+            450,
+            250,
+            40,
+            "plataforma"));
+
+    plataformas.push_back(
+        new obstaculo(
+            5700,
+            320,
+            250,
+            40,
+            "plataforma"));
+
+    plataformas.push_back(
+        new obstaculo(
+            6500,
+            500,
+            250,
+            40,
+            "plataforma"));
+
+    plataformas.push_back(
+        new obstaculo(
+            7300,
+            350,
+            250,
+            40,
+            "plataforma"));
+
 
     portal = new ZonaSegura(
-        4700,
-        140,
+        7700,
+        240,
         100,
         120,
         0,":/img/Recursos/portalN2.png");
+
 }
-    // ==================================================
-    // PREMIOS
-    // ==================================================
-/*
-    premios.push_back(
-        new premio(
-            1000,
-            540,
-            100));
 
-    premios.push_back(
-        new premio(
-            1600,
-            460,
-            100));
-
-    premios.push_back(
-        new premio(
-            2700,
-            540,
-            100));
-
-    premios.push_back(
-        new premio(
-            4300,
-            360,
-            100));
-*/
 void Nivel2::actualizar(float dt)
 {
+
+
+
     if(completado)
         return;
 
@@ -214,12 +207,17 @@ void Nivel2::actualizar(float dt)
 
     // CAER AL VACIO
 
+
     if(jugador->getPosicion().getY() > 900)
     {
         jugador->recibirDanio(1);
 
         jugador->setPosicion(100,500);
+
+        jugador->setVelocity(
+            Vector2D(0,0));
     }
+
 
     // GANAR
 
@@ -229,15 +227,6 @@ void Nivel2::actualizar(float dt)
         {
             completado = true;
         }
-    }
-    if(jugador->getPosicion().getX() >= 3200)
-    {
-        completado = true;
-
-        QMessageBox::information(
-            nullptr,
-            "GANASTE",
-            "Nivel completado");
     }
 }
 
@@ -336,11 +325,11 @@ void Nivel2::renderizar(QPainter *painter)
         camaraX = 0;
 
     // limite final del mapa
-    if(camaraX > 3000)
-        camaraX = 3000;
+    if(camaraX > 7000)
+        camaraX = 7000;
 
     // FONDO
-    for(int x = 0; x < 5000; x += fondoNivel.width())
+    for(int x = 0; x < 8000; x += fondoNivel.width())
     {
         painter->drawPixmap(
             x - camaraX,
@@ -439,4 +428,8 @@ void Nivel2::manejarTeclaLiberada(
 bool Nivel2::juegoTerminado() const
 {
     return jugador->getVidas() <= 0;
+}
+bool Nivel2::nivelCompletado() const
+{
+    return completado;
 }
