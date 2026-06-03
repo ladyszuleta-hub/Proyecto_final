@@ -161,6 +161,7 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent), ui(new Ui::MainWin
                 QUrl("qrc:/Recursos/nivel1.mp3"));
 
             musica->play();
+            setFocus();
 
             juegoIniciado = true;
 
@@ -175,7 +176,7 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent), ui(new Ui::MainWin
             ui->btnFacil->hide();
             ui->btnNormal->hide();
             ui->btnDificil->hide();
-            setFocus();
+
 
             // crear nivel 1
             if(nivel1 == nullptr)
@@ -532,6 +533,7 @@ void MainWindow::volverMenuNiveles()
     ui->btnnivel1->show();
 
     ui->btnsalirju->show();
+    ui->btndificultad->hide();
 
 
     if(nivel2Desbloqueado)
