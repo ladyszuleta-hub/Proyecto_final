@@ -433,3 +433,40 @@ bool Nivel2::nivelCompletado() const
 {
     return completado;
 }
+void Nivel2::setVelocidadEnemigo(float velocidad)
+{
+    for(auto enemigo : enemigos)
+    {
+        enemigo->setVelocidad(velocidad);
+    }
+
+    // Dificil = más enemigos
+    if(velocidad >= 360)
+    {
+        FireEnemy* enemigo2 =
+            new FireEnemy(
+                2500,
+                250,
+                48,
+                48,
+                new FrictionPhysics(0.03f));
+
+        enemigo2->setTarget(jugador);
+        enemigo2->setVelocidad(velocidad);
+
+        enemigos.push_back(enemigo2);
+
+        FireEnemy* enemigo3 =
+            new FireEnemy(
+                5000,
+                250,
+                48,
+                48,
+                new FrictionPhysics(0.03f));
+
+        enemigo3->setTarget(jugador);
+        enemigo3->setVelocidad(velocidad);
+
+        enemigos.push_back(enemigo3);
+    }
+}
