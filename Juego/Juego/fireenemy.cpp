@@ -57,8 +57,7 @@ void FireEnemy::updateLogic(float dt)
 
     Percepcion p = percibir();
 
-    TipoAccion accion =
-        decidirAccion(p);
+    TipoAccion accion =razonamiento(p);
 
     ejecutarAccion(accion);
 
@@ -122,6 +121,9 @@ void FireEnemy::updateLogic(float dt)
             target->recibirDanio(1);
 
             ataquesExitosos++;
+
+            aprendizaje();
+
         }
     }
     actualizarSprite();
@@ -295,7 +297,7 @@ Percepcion FireEnemy::percibir()
 
     return p;
 }
-TipoAccion FireEnemy::decidirAccion(const Percepcion& p)
+TipoAccion FireEnemy::razonamiento(const Percepcion& p)
 {
     if(!p.jugadorVisible)
     {
@@ -405,5 +407,14 @@ void FireEnemy::cargarSprites()
                 spriteSheet.copy(x*anchoFrame,y*altoFrame,anchoFrame,altoFrame)
                 );
         }
+    }
+}
+void FireEnemy::aprendizaje()
+{
+    if(ataquesExitosos >= 3)
+    {
+        speed += 20;
+
+        ataquesExitosos = 0;
     }
 }

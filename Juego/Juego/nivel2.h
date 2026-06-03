@@ -31,6 +31,7 @@ public:
 
     bool nivelCompletado() const;
     bool juegoTerminado() const;
+    void setVelocidadEnemigo(float velocidad);
 
 private:
 

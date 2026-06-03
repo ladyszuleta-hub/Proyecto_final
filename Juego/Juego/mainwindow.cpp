@@ -205,9 +205,10 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent), ui(new Ui::MainWin
         {
             musica->stop();
             musica->setSource(
-                QUrl("qrc:/Recursos/nivel2.mp3"));
+                QUrl("qrc:/Recursos/nivell2.mp3"));
 
             musica->play();
+            setFocus();
             juegoIniciado = true;
 
             // ocultar menu
@@ -227,6 +228,9 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent), ui(new Ui::MainWin
 
             // crear nivel 2
             nivel2 = new Nivel2();
+
+            nivel2->setVelocidadEnemigo(
+                velocidadEnemigo);
 
             fondoActual = QPixmap(
                 ":/img/Recursos/fondo_n2.png");

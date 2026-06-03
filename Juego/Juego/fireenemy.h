@@ -97,7 +97,7 @@ private:
 
     void simpleSeek(float dt);
     Percepcion percibir();
-    TipoAccion decidirAccion(const Percepcion& p);
+    TipoAccion razonamiento(const Percepcion& p);
     int ataquesExitosos;
     QPixmap spriteProyectil;
     bool proyectilActivo;
@@ -110,6 +110,7 @@ private:
     int frameActual;
 
     void cargarSprites();
+    void aprendizaje();
 
     void actualizarSprite();
 };
