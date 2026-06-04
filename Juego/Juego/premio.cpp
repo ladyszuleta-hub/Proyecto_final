@@ -3,6 +3,7 @@ using namespace std;
 
 premio::premio(float x, float y, QString tipo, int puntos):ObjetoJuego(x,y,32,32){
     this->puntos = puntos;
+    this->tipo = tipo;
     if(tipo == "diamante")
     {
         setSprite(":/img/Recursos/diamante.png");

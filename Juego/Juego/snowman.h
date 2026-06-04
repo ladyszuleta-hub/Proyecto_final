@@ -2,7 +2,8 @@
 #define SNOWMAN_H
 
 #include "entidad.h"
-#include <QSoundEffect>
+#include <QMediaPlayer>
+#include <QAudioOutput>
 #include <QKeyEvent>
 #include <QPainter>
 #include <QRectF>
@@ -27,7 +28,7 @@ public:
 
     SnowMan(float x,float y,float ancho,float alto,fisicas* physics,int vidas = 3);
 
-    ~SnowMan() override = default;
+    ~SnowMan() override;
 
     void updateLogic(float dt) override;
 
@@ -49,6 +50,7 @@ public:
     void moverArriba(float dt);
 
     void moverAbajo(float dt);
+    void resetTeclas();
 
     void saltar();
 
@@ -65,7 +67,7 @@ public:
     void setVidas(int hp);
 
     int getPuntaje() const;
-
+    float getBoostTimer() const;
     bool tieneBoostVelocidad() const;
 
     bool esInvulnerable() const;
@@ -139,11 +141,10 @@ private:
     float animTimer;
     float tiempoGolpeado;
 
-   // bool chocando;
-
     int nivelActual;
     //sonido
-    QSoundEffect sonidopremio;
+    QMediaPlayer* sonidoPremio;
+    QAudioOutput* audioPremio;
 
 };
 

@@ -4,27 +4,33 @@
 Nivel1::Nivel1()
 {
     enemigo = new FireEnemy(500,500,48,48,new FrictionPhysics(0.02f));
-    limitesMapa =QRectF(55,40,1265,665);
-
-    puntosMinimos = 820;
-    completado = false;
-
     jugador = new SnowMan(120,120,64,64,new FrictionPhysics(0.01));
+    limitesMapa =QRectF(55,45,1265,655);
 
     jugador->setLimites(limitesMapa);
+    jugador->resetTeclas();
     enemigo->setTarget(jugador);
 
     crearObstaculos();
-
     generarPremios();
-
     generarVidas();
 
-    portal =new ZonaSegura(1050,560,100,100,puntosMinimos,":/img/Recursos/portalN1.png");
-    sonidoportal.setSource(
-        QUrl("qrc:/Recursos/zonasegura.mp3"));
+    puntosMinimos = 400;
+    tiempoRestante = 60.0f;
+    completado = false;
 
-    sonidoportal.setVolume(1);
+    portal =new ZonaSegura(1050,560,100,100,puntosMinimos,":/img/Recursos/portalN1.png");
+    //sonido para el portal
+    audioPortal = new QAudioOutput();
+
+    sonidoPortal = new QMediaPlayer();
+
+    sonidoPortal->setAudioOutput(audioPortal);
+
+    sonidoPortal->setSource(QUrl("qrc:/Recursos/zonasegura.mp3"));
+
+    audioPortal->setVolume(1.0);
+
 }
 void Nivel1::crearObstaculos()
 {
@@ -33,6 +39,12 @@ void Nivel1::crearObstaculos()
     obstaculos.push_back(new obstaculo(700, 220, 90,90,"hielo"));
 
     obstaculos.push_back(new obstaculo(500,500,70,70,"caja"));
+
+    obstaculos.push_back(new obstaculo(1000,400,80,80,"roca"));
+
+    obstaculos.push_back(new obstaculo(200, 500, 90,90,"hielo"));
+
+    obstaculos.push_back(new obstaculo(900,180,70,70,"caja"));
 }
 void Nivel1::generarVidas()
 {
@@ -46,22 +58,16 @@ void Nivel1::generarPremios()
     for(int i=0;i<8;i++)
     {
         premios.push_back(new premio(60+rand()%1100,50+rand()%600,"diamante",50));
-        premios.push_back(new premio(60+rand()%1100,50+rand()%600,"copo",60));
+        premios.push_back(new premio(60+rand()%1100,50+rand()%600,"copo",0));
     }
 }
 void Nivel1::detectarColisiones()
 {
     for(auto obstaculo : obstaculos)
     {
-        QRectF jugadorRect(
-            jugador->getPosicion().getX(),
-            jugador->getPosicion().getY(),
-            64,
-            64
-            );
+        QRectF jugadorRect(jugador->getPosicion().getX(),jugador->getPosicion().getY(),64,64);
 
-        if(jugadorRect.intersects(
-                obstaculo->getHitbox()))
+        if(jugadorRect.intersects(obstaculo->getHitbox()))
         {
             Vector2D vel = jugador->getVelocity();
 
@@ -76,16 +82,14 @@ void Nivel1::detectarColisiones()
 
     for(auto premio : premios)
     {
-        if(premio->estaActivo() && jugador->colisionaCon(*premio))
-            {if(premio->getTipo() == "copo")
+        if(premio->estaActivo() && jugador->colisionaCon(*premio)){
+            if(premio->getTipo() == "copo")
                 {
                     jugador->recogerCopo();
                 }
                 else
                 {
-                    jugador->recogerDiamante(
-                        premio->getPuntos()
-                        );
+                    jugador->recogerDiamante(premio->getPuntos());
                 }
 
                 premio->setActivo(false);
@@ -109,7 +113,7 @@ void Nivel1::detectarColisiones()
     {
         if(jugador->colisionaCon(*portal))
         {
-            sonidoportal.play();
+            sonidoPortal->play();
             completado = true;
         }
     }
@@ -164,6 +168,8 @@ void Nivel1::renderizar(QPainter* painter)
         );
     painter->drawText(20,75, "PUNTAJE: " + QString::number(jugador->getPuntaje())
         );
+    renderizarTemporizador(painter);
+    renderizarBoost(painter);
 }
 void Nivel1::manejarTeclaPresionada(
     QKeyEvent* event)
@@ -175,8 +181,7 @@ void Nivel1::manejarTeclaPresionada(
 void Nivel1::manejarTeclaLiberada(
     QKeyEvent* event)
 {
-    jugador->manejarTeclaLiberada(
-        static_cast<Qt::Key>(event->key()));
+    jugador->manejarTeclaLiberada(static_cast<Qt::Key>(event->key()));
 }
 Nivel1::~Nivel1()
 {
@@ -185,6 +190,9 @@ Nivel1::~Nivel1()
     delete enemigo;
 
     delete portal;
+
+    delete audioPortal;
+    delete sonidoPortal;
 
     for(auto obstaculo : obstaculos)
     {
@@ -203,15 +211,21 @@ Nivel1::~Nivel1()
 }
 void Nivel1::actualizar(float dt)
 {
-    //jugador->setChocando(false);
     jugador->actualizar(dt);
     enemigo->actualizar(dt);
     portal->actualizarEstado(jugador->getPuntaje());
     detectarColisiones();
+    tiempoRestante -= dt;
+
+    if(tiempoRestante < 0)
+    {
+        tiempoRestante = 0;
+    }
+
 }
 bool Nivel1::juegoTerminado() const
 {
-    return jugador->getVidas() <= 0;
+    return jugador->getVidas() <= 0|| tiempoRestante <= 0;
 }
 bool Nivel1::nivelCompletado() const
 {
@@ -223,4 +237,57 @@ void Nivel1::setVelocidadEnemigo(float v)
     {
         enemigo->setVelocidad(v);
     }
+}
+void Nivel1::renderizarTemporizador(QPainter* painter)
+{
+    int minutos = static_cast<int>(tiempoRestante) / 60;
+
+    int segundos = static_cast<int>(tiempoRestante) % 60;
+
+    QString tiempoTexto =QString("%1:%2").arg(minutos).arg(segundos, 2, 10, QChar('0'));
+
+    painter->setFont(QFont("Arial",22,QFont::Bold));
+
+    if(tiempoRestante <= 10)
+    {
+        if(static_cast<int>(tiempoRestante * 2) % 2 == 0)
+            painter->setPen(Qt::red);
+        else
+            painter->setPen(Qt::darkRed);
+
+    }
+    else
+    {
+        painter->setPen(Qt::black);
+    }
+    painter->drawText(1100,40,"TIEMPO " + tiempoTexto);
+}
+void Nivel1::renderizarBoost(QPainter* painter)
+{
+    if(!jugador->tieneBoostVelocidad())
+        return;
+
+    painter->setPen(Qt::black);
+
+    painter->drawText(
+        20,
+        110,
+        "VELOCIDAD");
+
+    // Fondo de la barra
+    painter->drawRect(
+        120,
+        95,
+        120,
+        20);
+
+    // Barra que se vacía
+    float porcentaje =jugador->getBoostTimer() / 4.0f;
+
+    painter->fillRect(
+        121,
+        96,
+        static_cast<int>(118 * porcentaje),
+        18,
+        Qt::cyan);
 }

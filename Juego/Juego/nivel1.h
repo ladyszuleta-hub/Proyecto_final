@@ -5,7 +5,8 @@
 #include <QPainter>
 #include <QKeyEvent>
 #include "fireenemy.h"
-#include <QSoundEffect>
+#include <QMediaPlayer>
+#include <QAudioOutput>
 #include "snowman.h"
 #include "obstaculo.h"
 #include "premio.h"
@@ -58,7 +59,12 @@ private:
     void generarVidas();
 
     void detectarColisiones();
-    QSoundEffect sonidoportal;
+    QMediaPlayer* sonidoPortal;
+    QAudioOutput* audioPortal;
+    float tiempoRestante;
+
+    void renderizarTemporizador(QPainter* painter);
+    void renderizarBoost(QPainter* painter);
 
 
 };

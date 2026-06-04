@@ -98,22 +98,3 @@ void GravityPhysics::setGrounded(bool grounded)
 {
     isGrounded_ = grounded;
 }
-
-
-// ==================== viento ====================
-
-WindPhysics::WindPhysics(Vector2D direction,float strength)
-{
-    windDirection_ = direction;
-    windStrength_ = strength;
-}
-
-
-void WindPhysics::actualizar(Vector2D& pos,Vector2D& velocidad, float dt)
-{
-    velocidad.setX(velocidad.getX() + windDirection_.getX() * windStrength_  * dt);
-
-    velocidad.setY(velocidad.getY() + windDirection_.getY() * windStrength_ * dt);
-
-    pos.mover(velocidad.getX()*dt, velocidad.getY()*dt);
-}
