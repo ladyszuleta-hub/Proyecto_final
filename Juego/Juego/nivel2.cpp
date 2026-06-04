@@ -2,12 +2,17 @@
 #include <QKeyEvent>
 #include <QBrush>
 #include <QPen>
+#include <cmath>
 #include <QMessageBox>
 Nivel2::Nivel2()
 {
     completado = false;
 
     camaraX = 0;
+
+    tiempoOscilacion = 0;
+
+    dificultadDificil = false;
 
     fondoNivel.load(
         ":/img/Recursos/fondo_n2.png");
@@ -182,21 +187,63 @@ void Nivel2::actualizar(float dt)
         return;
 
     jugador->actualizar(dt);
+    if(dificultadDificil)
+    {
+        tiempoOscilacion += dt;
+
+        for(int i = 1; i < plataformas.size(); i++)
+        {
+            float yBase;
+
+            switch(i)
+            {
+            case 1: yBase = 520; break;
+            case 2: yBase = 420; break;
+            case 3: yBase = 320; break;
+            case 4: yBase = 500; break;
+            case 5: yBase = 380; break;
+            case 6: yBase = 250; break;
+            case 7: yBase = 450; break;
+            case 8: yBase = 320; break;
+            case 9: yBase = 500; break;
+            case 10: yBase = 350; break;
+            }
+
+            plataformas[i]->setPosicion(
+                plataformas[i]->getPosicion().getX(),
+                yBase + 50 * sin(tiempoOscilacion + i));
+        }
+    }
+    float nuevaY =
+        320 + 80 *
+                  std::sin(tiempoOscilacion * 2.0f);
+
+    plataformas[3]->setPosicion(
+        2200,
+        nuevaY);
+
+    // CAMARA
 
     // CAMARA
 
     camaraX =
         jugador->getPosicion().getX()
-        - 300;
+        - 400;
 
     if(camaraX < 0)
     {
         camaraX = 0;
     }
 
+    if(camaraX > 7000)
+    {
+        camaraX = 7000;
+    }
+
     // ENEMIGOS
 
-    for(auto enemigo : enemigos)
+    for(auto*
+             enemigo : enemigos)
     {
         enemigo->actualizar(dt);
     }
@@ -230,15 +277,11 @@ void Nivel2::actualizar(float dt)
     }
 }
 
-// ======================================================
-// COLISIONES
-// ======================================================
-
 void Nivel2::verificarColisiones()
 {
     // PREMIOS
 
-    for(auto pr : premios)
+    for(auto* pr : premios)
     {
         if(pr->estaActivo())
         {
@@ -254,7 +297,7 @@ void Nivel2::verificarColisiones()
 
     // ENEMIGOS
 
-    for(auto enemigo : enemigos)
+    for(auto* enemigo : enemigos)
     {
         if(enemigo->estaActivo())
         {
@@ -264,7 +307,7 @@ void Nivel2::verificarColisiones()
             }
         }
     }
-    for(auto plataforma : plataformas)
+    for(auto* plataforma : plataformas)
     {
         if(jugador->colisionaCon(*plataforma))
         {
@@ -309,24 +352,8 @@ void Nivel2::actualizarPortal()
         jugador->getPuntaje());
 }
 
-// ======================================================
-// RENDER
-// ======================================================
-
 void Nivel2::renderizar(QPainter *painter)
 {
-    // =========================================
-    // CAMARA
-    // =========================================
-
-    camaraX = jugador->getPosicion().getX() - 400;
-
-    if(camaraX < 0)
-        camaraX = 0;
-
-    // limite final del mapa
-    if(camaraX > 7000)
-        camaraX = 7000;
 
     // FONDO
     for(int x = 0; x < 8000; x += fondoNivel.width())
@@ -337,11 +364,9 @@ void Nivel2::renderizar(QPainter *painter)
             fondoNivel);
     }
 
-    // =========================================
     // PLATAFORMAS
-    // =========================================
 
-    for(auto plataforma : plataformas)
+    for(auto* plataforma : plataformas)
     {
         painter->save();
 
@@ -352,11 +377,9 @@ void Nivel2::renderizar(QPainter *painter)
         painter->restore();
     }
 
-    // =========================================
     // ENEMIGOS
-    // =========================================
 
-    for(auto enemigo : enemigos)
+    for(auto* enemigo : enemigos)
     {
         painter->save();
 
@@ -367,9 +390,7 @@ void Nivel2::renderizar(QPainter *painter)
         painter->restore();
     }
 
-    // =========================================
     // JUGADOR
-    // =========================================
 
     painter->save();
 
@@ -379,9 +400,7 @@ void Nivel2::renderizar(QPainter *painter)
 
     painter->restore();
 
-    // =========================================
     // PORTAL FINAL
-    // =========================================
 
     painter->save();
 
@@ -435,7 +454,7 @@ bool Nivel2::nivelCompletado() const
 }
 void Nivel2::setVelocidadEnemigo(float velocidad)
 {
-    for(auto enemigo : enemigos)
+    for(auto* enemigo : enemigos)
     {
         enemigo->setVelocidad(velocidad);
     }
@@ -469,4 +488,8 @@ void Nivel2::setVelocidadEnemigo(float velocidad)
 
         enemigos.push_back(enemigo3);
     }
+}
+void Nivel2::setDificultadDificil(bool estado)
+{
+    dificultadDificil = estado;
 }

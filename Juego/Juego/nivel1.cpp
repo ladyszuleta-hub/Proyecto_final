@@ -63,7 +63,7 @@ void Nivel1::generarPremios()
 }
 void Nivel1::detectarColisiones()
 {
-    for(auto obstaculo : obstaculos)
+    for(auto* obstaculo : obstaculos)
     {
         QRectF jugadorRect(jugador->getPosicion().getX(),jugador->getPosicion().getY(),64,64);
 
@@ -80,7 +80,7 @@ void Nivel1::detectarColisiones()
         }
     }
 
-    for(auto premio : premios)
+    for(auto* premio : premios)
     {
         if(premio->estaActivo() && jugador->colisionaCon(*premio)){
             if(premio->getTipo() == "copo")
@@ -96,7 +96,7 @@ void Nivel1::detectarColisiones()
             }
         }
 
-    for(auto vida : vidasExtra)
+    for(auto* vida : vidasExtra)
     {
         if(vida->estaActivo() && jugador->colisionaCon(*vida))
         {
@@ -124,12 +124,12 @@ void Nivel1::renderizar(QPainter* painter)
     jugador->renderizar(painter);
     enemigo->renderizar(painter);
 
-    for(auto obstaculo : obstaculos)
+    for(auto* obstaculo : obstaculos)
     {
         obstaculo->renderizar( painter);
     }
 
-    for(auto premio : premios)
+    for(auto* premio : premios)
     {
         if(premio->estaActivo())
         {
@@ -137,7 +137,7 @@ void Nivel1::renderizar(QPainter* painter)
         }
     }
 
-    for(auto vida : vidasExtra)
+    for(auto* vida : vidasExtra)
     {
         if(vida->estaActivo())
         {
@@ -194,17 +194,17 @@ Nivel1::~Nivel1()
     delete audioPortal;
     delete sonidoPortal;
 
-    for(auto obstaculo : obstaculos)
+    for(auto* obstaculo : obstaculos)
     {
         delete obstaculo;
     }
 
-    for(auto premio : premios)
+    for(auto* premio : premios)
     {
         delete premio;
     }
 
-    for(auto vida : vidasExtra)
+    for(auto* vida : vidasExtra)
     {
         delete vida;
     }

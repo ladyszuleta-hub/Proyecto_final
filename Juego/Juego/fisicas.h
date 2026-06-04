@@ -59,5 +59,23 @@ private:
     float groundY_;
     bool isGrounded_;
 };
+class OscillationPhysics : public fisicas
+{
+public:
 
+    OscillationPhysics(
+        float amplitud,
+        float frecuencia);
+
+    void actualizar(
+        Vector2D& pos,
+        Vector2D& velocidad,
+        float dt) override;
+
+private:
+
+    float amplitud_;
+    float frecuencia_;
+    float tiempo_;
+};
 #endif

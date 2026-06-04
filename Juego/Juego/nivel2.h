@@ -28,6 +28,7 @@ public:
     void manejarTeclaPresionada(QKeyEvent* event);
 
     void manejarTeclaLiberada(QKeyEvent* event);
+    void setDificultadDificil(bool estado);
 
     bool nivelCompletado() const;
     bool juegoTerminado() const;
@@ -54,9 +55,9 @@ private:
     // METODOS
 
     void crearNivel();
-
+    bool dificultadDificil;
     void verificarColisiones();
-
+    float tiempoOscilacion;
     void actualizarPortal();
 
 };

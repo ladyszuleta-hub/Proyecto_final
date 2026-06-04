@@ -139,9 +139,12 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent), ui(new Ui::MainWin
 
             // crear nivel 2
             nivel2 = new Nivel2();
+            nivel2->setVelocidadEnemigo(velocidadEnemigo);
 
-            nivel2->setVelocidadEnemigo(
-                velocidadEnemigo);
+            if(velocidadEnemigo >= 360)
+            {
+                nivel2->setDificultadDificil(true);
+            }
 
             fondoActual = QPixmap(
                 ":/img/Recursos/fondo_n2.png");
