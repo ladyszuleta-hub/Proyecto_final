@@ -1,5 +1,5 @@
 #include "fisicas.h"
-
+#include <cmath>
 //fisicas::fisicas() {}
 
 // BASE
@@ -97,4 +97,15 @@ bool GravityPhysics::isGrounded() const
 void GravityPhysics::setGrounded(bool grounded)
 {
     isGrounded_ = grounded;
+}
+OscillationPhysics::OscillationPhysics(float amplitud,float frecuencia): amplitud_(amplitud),frecuencia_(frecuencia),tiempo_(0)
+{}
+
+void OscillationPhysics::actualizar(Vector2D& pos,Vector2D& velocidad,float dt)
+{
+    tiempo_ += dt;
+
+    velocidad.setY(amplitud_ * frecuencia_* cos(frecuencia_ * tiempo_));
+
+    pos.mover(0,velocidad.getY() * dt);
 }

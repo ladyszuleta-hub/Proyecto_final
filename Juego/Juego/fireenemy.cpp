@@ -198,9 +198,11 @@ void FireEnemy::ejecutarAccion(TipoAccion accion)
 
             float distancia =std::sqrt(dx*dx + dy*dy);
 
-            dx /= distancia;
-
-            dy /= distancia;
+            if(distancia > 0)
+            {
+                dx /= distancia;
+                dy /= distancia;
+            }
 
             velocidad.setX(dx * speed);
 
@@ -328,6 +330,11 @@ bool FireEnemy::lanzarProyectil()
 
     float distancia =
         std::sqrt(dx*dx + dy*dy);
+
+    if(distancia <= 0)
+    {
+        return false;
+    }
 
     dx /= distancia;
     dy /= distancia;

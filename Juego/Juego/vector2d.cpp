@@ -33,5 +33,8 @@ void Vector2D::mover(float dx, float dy) {
 
 // Distancia
 float Vector2D::distancia(const Vector2D& otro) const {
-    return sqrt(pow(otro.x - x, 2) + pow(otro.y - y, 2));
+    float dx = otro.x - x;
+    float dy = otro.y - y;
+
+    return sqrt(dx*dx + dy*dy);
 }
