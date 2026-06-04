@@ -45,19 +45,25 @@ SnowMan::SnowMan(float x, float y,float ancho,float alto,fisicas* physics,int vi
     animTimer = 0;
     tiempoGolpeado = 0.0f;
 
-    //chocando = false;
-
     nivelActual = 1;
 
     cargarFrames();
     modoPlataforma = false;
     //sonido
-    sonidopremio.setSource(
-        QUrl("qrc:/Recursos/premio.mp3"));
+    audioPremio = new QAudioOutput();
+    sonidoPremio = new QMediaPlayer();
 
-    sonidopremio.setVolume(1);
+    sonidoPremio->setAudioOutput(audioPremio);
+
+    audioPremio->setVolume(1.0);
+    sonidoPremio->setSource(QUrl("qrc:/Recursos/premio.mp3"));
+
 }
-
+SnowMan::~SnowMan()
+{
+    delete sonidoPremio;
+    delete audioPremio;
+}
 
 void SnowMan::updateLogic(float dt)
 {
@@ -138,21 +144,29 @@ void SnowMan::renderizar(QPainter* painter,float camaraX)
         return;
     if(frames.empty())
         return;
+    if(boostVelocidadActivo)
+    {
+        int alpha;
+
+        if(static_cast<int>(boostTimer * 10) % 2 == 0)
+            alpha = 100;
+        else
+            alpha = 80;
+
+        painter->setPen(Qt::NoPen);
+        painter->setBrush(QColor(190,240,255,alpha));
+
+        painter->drawEllipse(
+            posicion.getX() - camaraX - 8,
+            posicion.getY() - 8,
+            ancho + 16,
+            alto + 16);
+    }
 
     painter->drawPixmap(
-        QRectF(
-            posicion.getX() - camaraX,
+        QRectF(posicion.getX() - camaraX,posicion.getY(),ancho,alto),
+        frames[frameActual],frames[frameActual].rect());
 
-            posicion.getY(),
-
-            ancho,
-
-            alto),
-
-        frames[frameActual],
-
-        frames[frameActual].rect()
-        );
 }
 void SnowMan::manejarTeclaPresionada(Qt::Key key)
 {
@@ -234,6 +248,13 @@ void SnowMan::manejarTeclaLiberada(Qt::Key key)
         break;
     }
 }
+void SnowMan::resetTeclas()
+{
+    moviendoIzquierda = false;
+    moviendoDerecha = false;
+    moviendoArriba = false;
+    moviendoAbajo = false;
+}
 
 void SnowMan::moverIzquierda(float dt)
 {
@@ -274,14 +295,16 @@ void SnowMan::saltar()
 
 void SnowMan::recogerCopo()
 {
-    boostVelocidadActivo = true;
-
     boostTimer = 4.0f;
 
-    velocidadNormal = speed;
+    if(!boostVelocidadActivo)
+    {
+        boostVelocidadActivo = true;
+        speed = velocidadNormal * 1.8f;
+    }
+    sonidoPremio->setPosition(0);
+    sonidoPremio->play();
 
-    speed *= 1.8f;
-    sonidopremio.play();
 }
 
 
@@ -294,7 +317,8 @@ void SnowMan::recogerDiamante(int puntos)
     }
 
     puntaje += puntos;
-    sonidopremio.play();
+    sonidoPremio->setPosition(0);
+    sonidoPremio->play();
 }
 
 void SnowMan::recibirDanio(int cantidad)
@@ -330,7 +354,10 @@ int SnowMan::getPuntaje() const
 {
     return puntaje;
 }
-
+float SnowMan::getBoostTimer() const
+{
+    return boostTimer;
+}
 bool SnowMan::tieneBoostVelocidad() const
 {
     return boostVelocidadActivo;
@@ -444,52 +471,77 @@ void SnowMan::cargarFrames()
 }
 void SnowMan::actualizarSprite(float dt)
 {
-    (void)dt;
+    animTimer += dt;
+
     switch(estado)
     {
     case EstadoSnowMan::IDLE:
         frameActual = 0;
         break;
-    case EstadoSnowMan::MOVIENDO_ARRIBA:
 
-        frameActual = 16;
-        break;
-    case EstadoSnowMan::MOVIENDO_ABAJO:
-        frameActual = 0;
-        break;
-    case EstadoSnowMan::MOVIENDO_IZQUIERDA:
-        frameActual = 6;
-        break;
     case EstadoSnowMan::MOVIENDO_DERECHA:
 
-        frameActual = 3;
-        break;
-    case EstadoSnowMan::SALTANDO:
+        if(animTimer < 0.15f)
+            frameActual = 2;
+        else
+            frameActual = 8;
 
+        if(animTimer >= 0.30f)
+            animTimer = 0;
+
+        break;
+
+    case EstadoSnowMan::MOVIENDO_IZQUIERDA:
+
+        if(animTimer < 0.15f)
+            frameActual = 6;
+        else
+            frameActual = 7;
+
+        if(animTimer >= 0.30f)
+            animTimer = 0;
+
+        break;
+
+    case EstadoSnowMan::MOVIENDO_ARRIBA:
+
+        if(animTimer < 0.15f)
+            frameActual = 16;
+        else
+            frameActual = 17;
+
+        if(animTimer >= 0.30f)
+            animTimer = 0;
+
+        break;
+
+    case EstadoSnowMan::MOVIENDO_ABAJO:
+
+        if(animTimer < 0.15f)
+            frameActual = 5;
+        else
+            frameActual = 1;
+
+        if(animTimer >= 0.30f)
+            animTimer = 0;
+
+        break;
+
+    case EstadoSnowMan::SALTANDO:
         frameActual = 8;
         break;
 
-
     case EstadoSnowMan::GOLPEADO:
-
         frameActual = 13;
         break;
-    case EstadoSnowMan::MUERTO:
 
+    case EstadoSnowMan::MUERTO:
         frameActual = 14;
         break;
     }
 }
-/*void SnowMan::setChocando(bool estado)
-{
-    chocando = estado;
 
-    if(chocando)
-    {
-        this->estado =
-            EstadoSnowMan::GOLPEADO;
-    }
-}*/
+
 void SnowMan::setVelocidadAuto(float v)
 {
     velocidadAuto = v;

@@ -73,9 +73,9 @@ private:
     bool nivel2Desbloqueado;
     void volverMenuNiveles();
 
-    bool mostrandoVictoria;
+    bool mostrandoHistoria;
 
-    QPixmap imagenVictoria;
+    QPixmap imagenHistoria;
 
     QTimer* timerVictoria;
 
@@ -84,6 +84,15 @@ private:
 
     QAudioOutput* audio;
     short int velocidadEnemigo;
+    //ocultar botones
+    void mostrarMenuPrincipal();
+    void mostrarMenuNiveles();
+    void mostrarMenuDificultad();
+    void ocultarTodosLosBotones();
+    void mostrarHistoriaInicioNivel1();
+    void iniciarNivel1();
+    void gameloop();
+    void mostrarHistoriaFinal();
 };
 
 #endif // MAINWINDOW_H

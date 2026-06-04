@@ -19,6 +19,8 @@
         <file>Recursos/portalN2.png</file>
         <file>Recursos/ganaste.png</file>
         <file>Recursos/musica.png</file>
+        <file>Recursos/historian1.png</file>
+        <file>Recursos/historian2.png</file>
     </qresource>
     <qresource prefix="/sonidos"/>
     <qresource prefix="/">
@@ -26,5 +28,7 @@
         <file>Recursos/menuprincipal.mp3</file>
         <file>Recursos/zonasegura.mp3</file>
         <file>Recursos/premio.mp3</file>
+        <file>Recursos/nivell2.mp3</file>
+        <file>Recursos/zonasegura1.wav</file>
     </qresource>
 </RCC>

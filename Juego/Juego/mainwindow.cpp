@@ -23,22 +23,17 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent), ui(new Ui::MainWin
     ui->btnNormal->hide();
     ui->btnDificil->hide();
 
-    fondoMenuPrincipal = QPixmap(
-        ":/img/Recursos/menuprinc.png");
+    fondoMenuPrincipal = QPixmap(":/img/Recursos/menuprinc.png");
 
-    fondoMenuNiveles = QPixmap(
-        ":/img/Recursos/submenu1.png");
+    fondoMenuNiveles = QPixmap(":/img/Recursos/submenu1.png");
 
-    fondoMenuDificultad = QPixmap(
-        ":/img/Recursos/submenudific.png");
-    fondoGameOver = QPixmap(
-        ":/img/Recursos/gameover.png");
+    fondoMenuDificultad = QPixmap(":/img/Recursos/submenudific.png");
+    fondoGameOver = QPixmap(":/img/Recursos/gameover.png");
 
     fondoActual = fondoMenuPrincipal;
-    mostrandoVictoria = false;
+    mostrandoHistoria = false;
 
-    imagenVictoria = QPixmap(
-        ":/img/Recursos/ganaste.png");
+    imagenHistoria = QPixmap(":/img/Recursos/ganaste.png");
 
     timerVictoria = new QTimer(this);
 
@@ -49,15 +44,13 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent), ui(new Ui::MainWin
     musica = new QMediaPlayer(this);
     musica->setAudioOutput(audio);
     audio->setVolume(0.4);
-    musica->setSource(
-        QUrl("qrc:/Recursos/menuprincipal.mp3"));
+    musica->setSource(QUrl("qrc:/Recursos/menuprincipal.mp3"));
 
     musica->play();
-    ui->btnMusica->setIcon(
-        QIcon(":/img/Recursos/musica.png"));
+    ui->btnMusica->setIcon(QIcon(":/img/Recursos/musica.png"));
 
-    ui->btnMusica->setIconSize(
-        QSize(80,80));
+    ui->btnMusica->setIconSize(QSize(80,80));
+    ui->btnMusica->setFocusPolicy(Qt::NoFocus);
 
 
     // TIMER
@@ -70,7 +63,6 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent), ui(new Ui::MainWin
         &QPushButton::clicked,
 
         this,
-
         [=]()
     {
             if(musica->playbackState() == QMediaPlayer::PlayingState)
@@ -91,20 +83,8 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent), ui(new Ui::MainWin
         this,
 
         [=]()
-        {   
-            estadoMenu = MENU_NIVELES;
-
-            fondoActual = fondoMenuNiveles;
-
-            ui->btnJugar->hide();
-            ui->btnSalir->hide();
-            ui->btnCreditos->hide();
-
-
-            ui->btnnivel1->show();
-            ui->btnNivel2->show();
-            ui->btnsalirju->show();
-
+        {
+            mostrarMenuNiveles();
             update();
         });
     connect(
@@ -118,8 +98,6 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent), ui(new Ui::MainWin
             volverMenuPrincipal();
             update();
         });
-
-
     connect(
         ui->btndificultad,
         &QPushButton::clicked,
@@ -128,23 +106,7 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent), ui(new Ui::MainWin
 
         [=]()
         {
-            estadoMenu = MENU_DIFICULTAD;
-
-            fondoActual = fondoMenuDificultad;
-            ui->btnJugar->hide();
-            ui->btnSalir->hide();
-            ui->btnCreditos->hide();
-            ui->btnsalirju->hide();
-            //
-
-            ui->btnnivel1->hide();
-            ui->btnNivel2->hide();
-            ui->btndificultad->hide();
-
-            ui->btnFacil->show();
-            ui->btnNormal->show();
-            ui->btnDificil->show();
-
+            mostrarMenuDificultad();
             update();
         });
     connect(
@@ -155,46 +117,9 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent), ui(new Ui::MainWin
 
         [=]()
         {
-            musica->stop();
-
-            musica->setSource(
-                QUrl("qrc:/Recursos/nivel1.mp3"));
-
-            musica->play();
-            setFocus();
-
-            juegoIniciado = true;
-
-            estadoMenu = JUGANDO;
-
-            // ocultar botones de menú
-
-            ui->btnnivel1->hide();
-            ui->btnNivel2->hide();
-            ui->btndificultad->hide();
-            ui->btnsalirju->hide();
-            ui->btnFacil->hide();
-            ui->btnNormal->hide();
-            ui->btnDificil->hide();
-
-
-            // crear nivel 1
-            if(nivel1 == nullptr)
-            {
-                nivel1 = new Nivel1();
-                nivel1->setVelocidadEnemigo(velocidadEnemigo);
-            }
-            // fondo del nivel
-
-            fondoActual = QPixmap(
-                ":/img/Recursos/fondo_n1.png");
-
-            timer->start(16);
-
-
-            update();
+            mostrarHistoriaInicioNivel1();
         });
-//borrar cuando termines el nivel 1, es solo para probar nivel 2
+
     connect(
         ui->btnNivel2,
         &QPushButton::clicked,
@@ -210,21 +135,7 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent), ui(new Ui::MainWin
             musica->play();
             setFocus();
             juegoIniciado = true;
-
-            // ocultar menu
-            //ui->label->hide();
-
-            ui->btnJugar->hide();
-
-            ui->btnNivel2->hide();
-            ui->btnnivel1->hide();
-            ui->btndificultad->hide();
-
-            ui->btnSalir->hide();
-
-            ui->btnsalirju->hide();
-
-            ui->btnCreditos->hide();
+            ocultarTodosLosBotones();
 
             // crear nivel 2
             nivel2 = new Nivel2();
@@ -270,7 +181,7 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent), ui(new Ui::MainWin
                 "Creditos",
 
                 "Juego creado por Davielys y Ladys \n\n"
-                "Proyecto en Qt Creator"
+                "Proyecto en Qt Creator\n\n"
                 "Imagenes generadas con IA"
                 );
         });
@@ -283,7 +194,7 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent), ui(new Ui::MainWin
 
         [=]()
         {
-            mostrandoVictoria = false;
+            mostrandoHistoria = false;
 
             volverMenuNiveles();
         });
@@ -310,47 +221,8 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent), ui(new Ui::MainWin
 
         [=]()
         {
-            if(juegoIniciado)
-            {   // borrar cuando este liso el nivel 1
-                if(nivel1 != nullptr)
-                {
-                // borrar cuando este liso el nivel 1
-                    nivel1->actualizar(0.016f);
-                    if(nivel1->nivelCompletado())
-                    {
-                        nivel2Desbloqueado = true;
-                        mostrandoVictoria = true;
+            gameloop();
 
-                        timer->stop();
-                        timerVictoria->start(3000);
-                        update();
-                    }
-
-                }
-                if(nivel1 != nullptr &&nivel1->juegoTerminado()){
-                    mostrarGameOver();
-                }
-                if(nivel2 != nullptr)
-                {
-                    nivel2->actualizar(0.016f);
-
-                    if(nivel2->nivelCompletado())
-                    {
-                        mostrandoVictoria = true;
-
-                        timer->stop();
-
-                        timerVictoria->start(3000);
-
-                        update();
-                    }
-                }
-                if(nivel2 != nullptr && nivel2->juegoTerminado()){
-                    mostrarGameOver();
-                }
-
-                update();
-            }
         });
     connect(ui->btnFacil,
             &QPushButton::clicked,
@@ -377,6 +249,50 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent), ui(new Ui::MainWin
                 volverMenuPrincipal();
             });
 }
+
+void MainWindow::gameloop(){
+if(juegoIniciado)
+    {
+        if(nivel1 != nullptr)
+        {
+            nivel1->actualizar(0.016f);
+            if(nivel1->nivelCompletado())
+            {
+                imagenHistoria.load(":/img/Recursos/ganaste.png");
+                mostrandoHistoria = true;
+
+                timer->stop();
+                timerVictoria->start(3000);
+                update();
+            }
+
+        }
+        if(nivel1 != nullptr &&nivel1->juegoTerminado()){
+            mostrarGameOver();
+        }
+        if(nivel2 != nullptr)
+        {
+            nivel2->actualizar(0.016f);
+
+            if(nivel2->nivelCompletado())
+            {
+                mostrarHistoriaFinal();
+                /*imagenHistoria.load(":/img/Recursos/ganaste.png");
+                mostrandoHistoria = true;
+
+                timer->stop();
+
+                timerVictoria->start(3000);
+
+                update();*/
+            }
+        }
+        if(nivel2 != nullptr && nivel2->juegoTerminado()){
+            mostrarGameOver();
+        }
+        update();
+}
+}
 void MainWindow::mostrarGameOver()
 {
     estadoMenu = GAME_OVER;
@@ -401,29 +317,13 @@ void MainWindow::volverMenuPrincipal()
     nivel2 = nullptr;
 
     juegoIniciado = false;
-
-    estadoMenu = MENU_PRINCIPAL;
-
-    fondoActual = fondoMenuPrincipal;
+    mostrarMenuPrincipal();
     musica->stop();
 
     musica->setSource(
         QUrl("qrc:/Recursos/menuprincipal.mp3"));
 
     musica->play();
-
-    ui->btnJugar->show();
-    ui->btnSalir->show();
-    ui->btndificultad->show();
-    ui->btnCreditos->show();
-
-    ui->btnnivel1->hide();
-    ui->btnNivel2->hide();
-    ui->btnsalirju->hide();
-    ui->btnFacil->hide();
-    ui->btnNormal->hide();
-    ui->btnDificil->hide();
-
     update();
 }
 MainWindow::~MainWindow()
@@ -465,61 +365,48 @@ void MainWindow::paintEvent(QPaintEvent *event)
     {
         if(nivel1 != nullptr)
         {
-         //borrar cuando este listo el nivel 1
             nivel1->renderizar(&painter);
         }
-        //borrar cuando este listo el nivel 1
         if(nivel2 != nullptr)
         {
-        //borrar cuando este listo el nivel 1
             nivel2->renderizar(&painter);
         }
-        /*nivel1->renderizar(&painter);*/ //descomentar cuando este listo el nivel 1
     }
-    if(mostrandoVictoria)
+    if(mostrandoHistoria)
     {
         painter.drawPixmap(
             rect(),
-            imagenVictoria);
+            imagenHistoria);
     }
 }
 
 // TECLADO
 
 void MainWindow::keyPressEvent(QKeyEvent *event)
-{    //borrar cuando este listo el nivel 1
+{
     if(nivel1 != nullptr)
-    {//borrar cuando este listo el nivel 1
-        nivel1->manejarTeclaPresionada(event);
-    }
-    //borrar cuando este listo el nivel 1
-    if(nivel2 != nullptr)
-    {//borrar cuando este listo el nivel 1
-        nivel2->manejarTeclaPresionada(event);
-    }
-
-    /*if(juegoIniciado)
     {
         nivel1->manejarTeclaPresionada(event);
-    }*/
+    }
+    if(nivel2 != nullptr)
+    {
+        nivel2->manejarTeclaPresionada(event);
+    }
 }
 
 void MainWindow::keyReleaseEvent(QKeyEvent *event)
-{//borrar cuando este listo el nivel 1
+{
     if(nivel1 != nullptr)
-    {//borrar cuando este listo el nivel 1
-        nivel1->manejarTeclaLiberada(event);
-    }//borrar cuando este listo el nivel 1
-
-    if(nivel2 != nullptr)
-    {//borrar cuando este listo el nivel 1
-        nivel2->manejarTeclaLiberada(event);
-    }
-    /*if(juegoIniciado)                     //descomentar cuando este listo el nivel 1
     {
         nivel1->manejarTeclaLiberada(event);
-    }*/
+    }
+
+    if(nivel2 != nullptr)
+    {
+        nivel2->manejarTeclaLiberada(event);
+    }
 }
+
 void MainWindow::volverMenuNiveles()
 {
     delete nivel1;
@@ -529,21 +416,136 @@ void MainWindow::volverMenuNiveles()
     nivel2 = nullptr;
 
     juegoIniciado = false;
-
-    estadoMenu = MENU_NIVELES;
-
-    fondoActual = fondoMenuNiveles;
-
-    ui->btnnivel1->show();
-
-    ui->btnsalirju->show();
-    ui->btndificultad->hide();
-
-
-    if(nivel2Desbloqueado)
-    {
-        ui->btnNivel2->show();
-    }
+    mostrarMenuNiveles();
 
     update();
+}
+void MainWindow::ocultarTodosLosBotones()
+{
+    ui->btnJugar->hide();
+    ui->btnSalir->hide();
+    ui->btnCreditos->hide();
+
+    ui->btnnivel1->hide();
+    ui->btnNivel2->hide();
+
+    ui->btnFacil->hide();
+    ui->btnNormal->hide();
+    ui->btnDificil->hide();
+
+    ui->btnsalirju->hide();
+    ui->btndificultad->hide();
+}
+void MainWindow::mostrarMenuPrincipal()
+{
+    ocultarTodosLosBotones();
+
+    ui->btnJugar->show();
+    ui->btnSalir->show();
+    ui->btnCreditos->show();
+    ui->btndificultad->show();
+
+    estadoMenu = MENU_PRINCIPAL;
+    fondoActual = fondoMenuPrincipal;
+}
+void MainWindow::mostrarMenuNiveles()
+{
+    ocultarTodosLosBotones();
+
+    ui->btnnivel1->show();
+    ui->btnsalirju->show();
+    ui->btnNivel2->show();
+    estadoMenu = MENU_NIVELES;
+    fondoActual = fondoMenuNiveles;
+}
+void MainWindow::mostrarMenuDificultad()
+{
+    ocultarTodosLosBotones();
+
+    ui->btnFacil->show();
+    ui->btnNormal->show();
+    ui->btnDificil->show();
+
+    estadoMenu = MENU_DIFICULTAD;
+    fondoActual = fondoMenuDificultad;
+}
+
+void MainWindow::mostrarHistoriaInicioNivel1()
+{
+
+    imagenHistoria.load(
+        ":/img/Recursos/historian1.png");
+
+    mostrandoHistoria = true;
+
+    update();
+    ocultarTodosLosBotones();
+    QTimer::singleShot(
+        5000,
+        this,
+        [=]()
+        {
+            mostrandoHistoria = false;
+
+            iniciarNivel1();
+
+            update();
+        });
+}
+void MainWindow::iniciarNivel1()
+{
+    musica->stop();
+
+    musica->setSource(QUrl("qrc:/Recursos/nivel1.mp3"));
+
+    musica->play();
+    setFocus();
+
+    juegoIniciado = true;
+
+    estadoMenu = JUGANDO;
+    ocultarTodosLosBotones();
+
+    // crear nivel 1
+    if(nivel1 == nullptr)
+    {
+        nivel1 = new Nivel1();
+        nivel1->setVelocidadEnemigo(velocidadEnemigo);
+    }
+    // fondo del nivel
+
+    fondoActual = QPixmap(
+        ":/img/Recursos/fondo_n1.png");
+
+    timer->start(16);
+
+
+    update();
+
+}
+void MainWindow::mostrarHistoriaFinal()
+{
+    imagenHistoria.load(":/img/Recursos/historian2.png");
+
+    mostrandoHistoria = true;
+
+    update();
+
+    QTimer::singleShot(
+        4000,
+        this,
+        [=]()
+        {
+            mostrandoHistoria = false;
+
+            imagenHistoria.load(":/img/Recursos/ganaste.png");
+
+            mostrandoHistoria = true;
+
+            update();
+            timer->stop();
+
+            timerVictoria->start(1000);
+
+        });
 }
