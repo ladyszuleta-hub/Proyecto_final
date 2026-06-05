@@ -43,6 +43,7 @@ private:
     std::vector<obstaculo*> plataformas;
 
     std::vector<premio*> premios;
+    std::vector<premio*> vidasExtra;
 
     ZonaSegura* portal;
 
@@ -59,6 +60,7 @@ private:
     void verificarColisiones();
     float tiempoOscilacion;
     void actualizarPortal();
+    void generarVidas();
 
 };
 

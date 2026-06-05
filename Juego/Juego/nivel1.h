@@ -31,6 +31,10 @@ private:
 
     QRectF limitesMapa;
     bool completado;
+    QMediaPlayer* sonidoPortal;
+    QAudioOutput* audioPortal;
+
+    float tiempoRestante;
 
 
 public:
@@ -59,12 +63,10 @@ private:
     void generarVidas();
 
     void detectarColisiones();
-    QMediaPlayer* sonidoPortal;
-    QAudioOutput* audioPortal;
-    float tiempoRestante;
 
     void renderizarTemporizador(QPainter* painter);
     void renderizarBoost(QPainter* painter);
+    bool posicionLibre(float x, float y);
 
 
 };

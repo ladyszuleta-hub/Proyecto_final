@@ -23,6 +23,7 @@ public:
     bool estaDesbloqueada() const;
 
     int getPuntosNecesarios() const;
+    QRectF getHitbox() const;
 };
 
 #endif // ZONASEGURA_H

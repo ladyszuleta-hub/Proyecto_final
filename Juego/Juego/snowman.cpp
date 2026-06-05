@@ -162,6 +162,11 @@ void SnowMan::renderizar(QPainter* painter,float camaraX)
             ancho + 16,
             alto + 16);
     }
+    if(invulnerable)
+    {
+        if(static_cast<int>(hitTimer * 10) % 2 == 0)
+            return;
+    }
 
     painter->drawPixmap(
         QRectF(posicion.getX() - camaraX,posicion.getY(),ancho,alto),

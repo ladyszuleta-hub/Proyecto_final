@@ -19,7 +19,7 @@ Nivel1::Nivel1()
     tiempoRestante = 60.0f;
     completado = false;
 
-    portal =new ZonaSegura(1050,560,100,100,puntosMinimos,":/img/Recursos/portalN1.png");
+    portal =new ZonaSegura(1050,100,100,94,puntosMinimos,":/img/Recursos/portalN1.png");
     //sonido para el portal
     audioPortal = new QAudioOutput();
 
@@ -48,18 +48,50 @@ void Nivel1::crearObstaculos()
 }
 void Nivel1::generarVidas()
 {
-    for(int i=0;i<2;i++)
-    {
-        vidasExtra.push_back(new premio(55+rand()%1100,40+rand()%620,"vida",0));
-    }
+    vidasExtra.push_back(
+        new premio(250,600,"vida",0));
+
+    vidasExtra.push_back(
+        new premio(950,100,"vida",0));
 }
 void Nivel1::generarPremios()
 {
-    for(int i=0;i<8;i++)
+    // 8 diamantes aleatorios
+    for(int i = 0; i < 8; i++)
     {
-        premios.push_back(new premio(60+rand()%1100,50+rand()%600,"diamante",50));
-        premios.push_back(new premio(60+rand()%1100,50+rand()%600,"copo",0));
+        float x, y;
+
+        do
+        {
+            x = 60 + rand()%1100;
+            y = 50 + rand()%600;
+        }
+        while(!posicionLibre(x,y));
+
+        premios.push_back(new premio(x,y,"diamante",50));
     }
+
+    // Copos en posiciones especificas
+    premios.push_back(
+        new premio(150,120,"copo",0));
+
+    premios.push_back(
+        new premio(850,320,"copo",0));
+
+    premios.push_back(
+        new premio(1150,550,"copo",0));
+}
+bool Nivel1::posicionLibre(float x, float y)
+{
+    QRectF nuevo(x, y, 32, 32);
+
+    for(auto* obstaculo : obstaculos)
+    {
+        if(nuevo.intersects(obstaculo->getHitbox()))
+            return false;
+    }
+
+    return true;
 }
 void Nivel1::detectarColisiones()
 {
@@ -111,7 +143,9 @@ void Nivel1::detectarColisiones()
     }
     if(portal->estaDesbloqueada())
     {
-        if(jugador->colisionaCon(*portal))
+        QRectF jugadorRect(jugador->getPosicion().getX(),jugador->getPosicion().getY(),50,50);
+
+        if(jugadorRect.intersects(portal->getHitbox()))
         {
             sonidoPortal->play();
             completado = true;
@@ -121,6 +155,7 @@ void Nivel1::detectarColisiones()
 
 void Nivel1::renderizar(QPainter* painter)
 {
+    portal->renderizar(painter);
     jugador->renderizar(painter);
     enemigo->renderizar(painter);
 
@@ -144,8 +179,6 @@ void Nivel1::renderizar(QPainter* painter)
             vida->renderizar(painter);
         }
     }
-
-    portal->renderizar(painter);
     painter->setPen(Qt::black);
 
     painter->setFont(

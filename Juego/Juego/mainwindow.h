@@ -91,6 +91,7 @@ private:
     void ocultarTodosLosBotones();
     void mostrarHistoriaInicioNivel1();
     void iniciarNivel1();
+    void inicialNivel2();
     void gameloop();
     void mostrarHistoriaFinal();
 };
