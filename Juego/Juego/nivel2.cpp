@@ -13,6 +13,7 @@ Nivel2::Nivel2()
     tiempoOscilacion = 0;
 
     dificultadDificil = false;
+    generarVidas();
 
     fondoNivel.load(
         ":/img/Recursos/fondo_n2.png");
@@ -48,6 +49,7 @@ Nivel2::~Nivel2()
 
 void Nivel2::crearNivel()
 {
+
     jugador = new SnowMan(
         100,
         500,
@@ -61,6 +63,7 @@ void Nivel2::crearNivel()
         3);
 
     jugador->setVelocidadAuto(0);
+
 
     jugador->setNivelActual(2);
 
@@ -176,6 +179,14 @@ void Nivel2::crearNivel()
         120,
         0,":/img/Recursos/portalN2.png");
 
+}
+void Nivel2::generarVidas()
+{
+    vidasExtra.push_back(
+        new premio(1700,250,"vida",0));
+
+    vidasExtra.push_back(
+        new premio(5900,290,"vida",0));
 }
 
 void Nivel2::actualizar(float dt)
@@ -307,6 +318,16 @@ void Nivel2::verificarColisiones()
             }
         }
     }
+    //vida
+    for(auto* vida : vidasExtra)
+    {
+        if(vida->estaActivo() && jugador->colisionaCon(*vida))
+        {
+            jugador->setVidas(jugador->getVidas()+1);
+
+            vida->setActivo(false);
+        }
+    }
     for(auto* plataforma : plataformas)
     {
         if(jugador->colisionaCon(*plataforma))
@@ -388,6 +409,20 @@ void Nivel2::renderizar(QPainter *painter)
         enemigo->renderizar(painter);
 
         painter->restore();
+    }
+    //vida
+    for(auto* vida : vidasExtra)
+    {
+        if(vida->estaActivo())
+        {
+            painter->save();
+
+            painter->translate(-camaraX,0);
+
+            vida->renderizar(painter);
+
+            painter->restore();
+        }
     }
 
     // JUGADOR

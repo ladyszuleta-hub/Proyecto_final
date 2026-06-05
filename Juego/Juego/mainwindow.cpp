@@ -128,30 +128,7 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent), ui(new Ui::MainWin
 
         [=]()
         {
-            musica->stop();
-            musica->setSource(
-                QUrl("qrc:/Recursos/nivell2.mp3"));
-
-            musica->play();
-            setFocus();
-            juegoIniciado = true;
-            ocultarTodosLosBotones();
-
-            // crear nivel 2
-            nivel2 = new Nivel2();
-            nivel2->setVelocidadEnemigo(velocidadEnemigo);
-
-            if(velocidadEnemigo >= 360)
-            {
-                nivel2->setDificultadDificil(true);
-            }
-
-            fondoActual = QPixmap(
-                ":/img/Recursos/fondo_n2.png");
-
-            timer->start(16);
-
-            update();
+            inicialNivel2();
         });
 
     // BOTON SALIR
@@ -214,7 +191,6 @@ MainWindow::MainWindow(QWidget *parent): QMainWindow(parent), ui(new Ui::MainWin
                 musica->play();
             }
         });
-    // GAME LOOP
 
     connect(
         timer,
@@ -280,14 +256,6 @@ if(juegoIniciado)
             if(nivel2->nivelCompletado())
             {
                 mostrarHistoriaFinal();
-                /*imagenHistoria.load(":/img/Recursos/ganaste.png");
-                mostrandoHistoria = true;
-
-                timer->stop();
-
-                timerVictoria->start(3000);
-
-                update();*/
             }
         }
         if(nivel2 != nullptr && nivel2->juegoTerminado()){
@@ -525,6 +493,32 @@ void MainWindow::iniciarNivel1()
 
     update();
 
+}
+void MainWindow::inicialNivel2(){
+    musica->stop();
+    musica->setSource(
+        QUrl("qrc:/Recursos/nivell2.mp3"));
+
+    musica->play();
+    setFocus();
+    juegoIniciado = true;
+    ocultarTodosLosBotones();
+
+    // crear nivel 2
+    nivel2 = new Nivel2();
+    nivel2->setVelocidadEnemigo(velocidadEnemigo);
+
+    if(velocidadEnemigo >= 360)
+    {
+        nivel2->setDificultadDificil(true);
+    }
+
+    fondoActual = QPixmap(
+        ":/img/Recursos/fondo_n2.png");
+
+    timer->start(16);
+
+    update();
 }
 void MainWindow::mostrarHistoriaFinal()
 {

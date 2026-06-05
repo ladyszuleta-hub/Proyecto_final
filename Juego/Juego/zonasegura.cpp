@@ -29,6 +29,15 @@ void ZonaSegura::renderizar(QPainter* painter){
             spritePortal,
             spritePortal.rect());
 }
+QRectF ZonaSegura::getHitbox() const
+{
+    return QRectF(
+        posicion.getX() + 30,
+        posicion.getY() + 30,
+        ancho - 60,
+        alto - 70
+        );
+}
 
 // Actualiza si el portal ya puede abrirse
 void ZonaSegura::actualizarEstado(int puntosJugador){
@@ -42,3 +51,4 @@ bool ZonaSegura::estaDesbloqueada() const{
 int ZonaSegura::getPuntosNecesarios() const{
     return puntosNecesarios;
 }
+
