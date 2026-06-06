@@ -202,28 +202,12 @@ void Nivel2::actualizar(float dt)
     {
         tiempoOscilacion += dt;
 
-        for(int i = 1; i < plataformas.size(); i++)
-        {
-            float yBase;
-
-            switch(i)
-            {
-            case 1: yBase = 520; break;
-            case 2: yBase = 420; break;
-            case 3: yBase = 320; break;
-            case 4: yBase = 500; break;
-            case 5: yBase = 380; break;
-            case 6: yBase = 250; break;
-            case 7: yBase = 450; break;
-            case 8: yBase = 320; break;
-            case 9: yBase = 500; break;
-            case 10: yBase = 350; break;
-            }
-
-            plataformas[i]->setPosicion(
-                plataformas[i]->getPosicion().getX(),
-                yBase + 50 * sin(tiempoOscilacion + i));
-        }
+        plataformas[4]->setPosicion(plataformas[4]->getPosicion().getX(),
+            500 + 50 * sin(tiempoOscilacion + (4)));
+        plataformas[6]->setPosicion(plataformas[6]->getPosicion().getX(),
+                                    250 + 50 * sin(tiempoOscilacion + (6)));
+        plataformas[8]->setPosicion(plataformas[8]->getPosicion().getX(),
+                                    320 + 50 * sin(tiempoOscilacion + (8)));
     }
     float nuevaY =
         320 + 80 *
